@@ -1,0 +1,1 @@
+A VS-Online adapter for Hubot
