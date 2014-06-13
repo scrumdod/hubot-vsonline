@@ -1,0 +1,26 @@
+{
+  "name": "hubot-vsonline",
+  "version": "0.0.1",
+  "description": "A Visual Studio Online adapter for hubot",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/scrumdod/hubot-VSOnline"
+  },
+  "keywords": [
+    "hubot",
+    "VSOnline"
+  ],
+  "author": "Rob Maher",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/scrumdod/hubot-VSOnline/issues"
+  },
+  "homepage": "https://github.com/scrumdod/hubot-VSOnline"
+}
