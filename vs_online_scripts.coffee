@@ -8,8 +8,6 @@
 #   hubot createbug <title> with description <description> - Create a Bug work item with the title and description specified.  This will put it in the root areapath and iteration
 #   hubot what have i done today - This will show a list of all tasks that you have updated today
 
-HTTPS          = require 'https'
-QS             = require 'querystring'
 Client = require 'vso-client' 
 
 
@@ -20,18 +18,32 @@ module.exports = (robot) ->
   url = process.env.HUBOT_TFSERVICE_NAME
   collection = process.env.HUBOT_COLLECTION_NAME
 
-  robot.respond /GetBuilds/i, (msg) ->
+  robot.respond /GetBuilds/i, (msg) ->    
     definitions=[]
-    client = Client.createClient(url, collection, username, password);
-    client.getBuildDefinitions (err,buildDefinitions) ->      
+    client = Client.createClient(url, collection, username, password)
+    client.getBuildDefinitions projectName, (err,buildDefinitions) ->            
+      if err
+        console.log err            
+      definitions.push "Here are the current build definitions: "              
+      for build in buildDefinitions                                           
+        definitions.push build.name + ' ' + build.id      
+      msg.send definitions.join "\n"   
+
+
+  robot.respond /Build (.*)/i, (msg) ->    
+    buildId = msg.match[1]    
+    client = Client.createClient(url, collection, username, password)    
+    buildRequest =
+      definition:
+        id: buildId
+      reason: 'Manual'
+      priority : 'Normal'
+
+    client.queueBuild buildRequest, (err, buildResponse) ->
       if err
         console.log err
-      definitions.push "Here are the current build definitions: "                   
-      for build in buildDefinitions.value                                           
-        definitions.push build.name         
-      msg.send definitions.join "\n"       
+      msg.send "Build queued.  Hope you you don't break the build! " + buildResponse.url
 
-           
   robot.respond /CreatePBI (.*) (with description) (.*)/i, (msg) ->
     title = msg.match[1]   
     descriptions = msg.match[3]     
@@ -80,7 +92,7 @@ module.exports = (robot) ->
       value :  descriptions
     workItem.fields.push descriptionField   
                
-    client = Client.createClient(url, collection, username, password);
+    client = Client.createClient(url, collection, username, password);    
     client.createWorkItem workItem, (err,createdWorkItem) ->      
       if err
         console.log err
@@ -135,7 +147,7 @@ module.exports = (robot) ->
     workItem.fields.push descriptionField   
                
     client = Client.createClient(url, collection, username, password);
-    client.createWorkItem workItem, (err,createdWorkItem) ->      
+    client.createWorkItem workItem, (err,createdWorkItem) ->       
       if err
         console.log err     
       msg.send "BUG " + createdWorkItem.id + " created.  " + createdWorkItem.webUrl
@@ -154,8 +166,7 @@ module.exports = (robot) ->
       if err
         console.log err             
       mypushes=[]
-      today = yesterdayDate()
-      console.log today
+      today = yesterdayDate() 
       for repo in repositories             
         client.getCommits repo.id, null, myuser, null,today,(err,pushes) ->
           if err

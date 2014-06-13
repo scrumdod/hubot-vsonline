@@ -1,9 +1,9 @@
 ﻿$env:HUBOT_ACCOUNT_NAME="tfsbot"
 $env:HUBOT_ACCOUNT_PWD="Diesel12"
-$env:HUBOT_PROJECT_NAME="Git1"
-$env:HUBOT_TFID="99e52418-128b-4391-8f68-c74466dddfa1"
-$env:HUBOT_TFSERVICE_NAME="https://hubottest.vsoalm.tfsallin.net/"
-$env:HUBOT_ROOMS="HubotRoom Team Room"
+$env:HUBOT_PROJECT_NAME="HubotTest"
+$env:HUBOT_TFID="f1c932f3-c52a-4278-b76c-543785678eaa"
+$env:HUBOT_TFSERVICE_NAME="https://robmaher.visualstudio.com"
+$env:HUBOT_ROOMS="HubotTest Team Room"
 $env:PORT="8080"
 $env:HUBOT_COLLECTION_NAME = "DefaultCollection"
 

@@ -18,8 +18,7 @@ class vsOnline extends Adapter
 
   send: (envelope, strings...) ->   
     messageToSend =
-      content : strings.join "\n"
-    console.log 'sending'      
+      content : strings.join "\n"        
     client = Client.createClient accountName, collection, username, password   
     client.createMessage envelope.room, messageToSend, (err,response) ->    
       if err
@@ -31,8 +30,7 @@ class vsOnline extends Adapter
 
   join: (roomId) ->   
     userId=
-      userId:userTFID
-    console.log userId.userId
+      userId:userTFID    
     client = Client.createClient accountName, collection, username, password  
     client.joinRoom roomId, userId, userTFID, (err, statusCode) ->      
       console.log "The response from joining was " + statusCode
@@ -49,11 +47,11 @@ class vsOnline extends Adapter
     client.getRooms (err, returnRooms) ->
       if err
         console.log err      
-      for room in rooms      
-        do (room) ->                        
-          find = (i for i in returnRooms when i.name is room)[0]                     
+      for room in rooms        
+        do(room) ->              
+          find = (i for i in returnRooms when i.name is room)[0]          
           self.join find.id
-          console.log "I have joined " + i.name   
+          console.log "I have joined " + find.name
           self.emit "connected" 
 
   processEvent: (event) ->        
