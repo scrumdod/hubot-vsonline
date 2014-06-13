@@ -39,8 +39,8 @@ class vsOnline extends Adapter
         
     @robot.router.post hubotUrl, (req, res) ->      
       self.processEvent req.body.resource       
-      res.writeHead 200, {'Content-Type': 'text/plain'}       
-      res.end "Thanks"             
+      res.writeHead 204, {'Content-Type': 'text/plain'}       
+      res.end  
 
     client = Client.createClient accountName, collection, username, password
     client.getRooms (err, returnRooms) ->

@@ -1,6 +1,6 @@
 {
   "name": "hubot-vsonline",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "A Visual Studio Online adapter for hubot",
   "main": "index.js",
   "directories": {
@@ -12,6 +12,9 @@
   "repository": {
     "type": "git",
     "url": "http://github.com/scrumdod/hubot-VSOnline"
+  },
+   "dependencies": {
+    "vso-client": ">=0.0.6"   
   },
   "keywords": [
     "hubot",
