@@ -23,15 +23,12 @@ Then save the file, and commit the changes to your hubot's git repository.
 
 The VSOnline adapter requires the following environment variables.
 
-	HUBOT_ACCOUNT_NAME - The account name that you would like to run hubot under
-	HUBOT_ACCOUNT_PWD - The account password
-	HUBOT_PROJECT_NAME - Team project name
+	HUBOT_VSONLINE_USERNAME - The account name that you would like to run hubot under
+	HUBOT_VSONLINE_PASSWORD - The account password
 	HUBOT_TFID - The TFID of the hubot account.  You can get this by logging into your Team Project as the hubot account and navigating to https://myacount.visualstudio.com/DefaultCollection/_api/_common/GetUserProfile?__v=4
-	HUBOT_TFSERVICE_NAME - The url of your Visual Studio Online account e.g. "https://yourname.visualstudio.com/"
-	HUBOT_ROOMS - A comma seperated list of rooms that you would like hubot to join
+	HUBOT_VSONLINE_ACCOUNT- The url of your Visual Studio Online account e.g. "https://yourname.visualstudio.com/"
+	HUBOT_VSONLINE_ROOMS - A comma seperated list of rooms that you would like hubot to join
 	PORT - Port number for hubot to listen on when receiving messages from the Teeam Room
-	HUBOT_COLLECTION_NAME - Team Foundation Server Collection Name
-
    
 ## License
 
