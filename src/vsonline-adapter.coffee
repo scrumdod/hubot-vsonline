@@ -1,5 +1,5 @@
 Client                                               = require 'vso-client'
-{Robot, Adapter, normal,TextMessage,EnterMessage,LeaveMessage,TopicMessage} = require '../message'
+{Robot, Adapter, normal,TextMessage,EnterMessage,LeaveMessage,TopicMessage} = require 'hubot'
 
 
 class vsOnline extends Adapter
