@@ -12,7 +12,7 @@ Then you will need to edit the `package.json` for your hubot and add the
 `hubot-vsonline dependency.
 
     "dependencies": {
-      "hubot-vsonline": ">= 0.0.1",
+      "hubot-vsonline": "*",
       "hubot": ">= 2.0.0",
       ...
     }
@@ -26,9 +26,9 @@ The VSOnline adapter requires the following environment variables.
 	HUBOT_VSONLINE_USERNAME - The account name that you would like to run hubot under
 	HUBOT_VSONLINE_PASSWORD - The account password
 	HUBOT_TFID - The TFID of the hubot account.  You can get this by logging into your Team Project as the hubot account and navigating to https://myacount.visualstudio.com/DefaultCollection/_api/_common/GetUserProfile?__v=4
-	HUBOT_VSONLINE_ACCOUNT- The url of your Visual Studio Online account e.g. "https://yourname.visualstudio.com/"
+	HUBOT_VSONLINE_ACCOUNT- The name of your Visual Studio Online account e.g. if the url that you connect to is "https://yourname.visualstudio.com/" then just use 'your name'
 	HUBOT_VSONLINE_ROOMS - A comma seperated list of rooms that you would like hubot to join
-	PORT - Port number for hubot to listen on when receiving messages from the Teeam Room
+	PORT - Port number for hubot to listen on when receiving messages from the Team Room.  This will default to 8080
    
 ## License
 
