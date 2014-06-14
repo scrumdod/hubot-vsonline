@@ -5,13 +5,13 @@ Client                                               = require 'vso-client'
 
 
 class vsOnline extends Adapter
-  username			 = process.env.HUBOT_ACCOUNT_NAME
-  password			 = process.env.HUBOT_ACCOUNT_PWD
+  username			 = process.env.HUBOT_VSONLINE_USERNAME
+  password			 = process.env.HUBOT_VSONLINE_PASSWORD
   userTFID			 = process.env.HUBOT_TFID
   authorization  = 'Basic ' + new Buffer(username + ':' + password).toString('base64')
-  accountName    = process.env.HUBOT_TFSERVICE_NAME
-  rooms          = process.env.HUBOT_ROOMS.split(",")
-  collection     = process.env.HUBOT_COLLECTION_NAME
+  accountName    = process.env.HUBOT_VSONLINE_ACCOUNT + ".visualstudio.com"
+  rooms          = process.env.HUBOT_VSONLINE_ROOMS.split(",")
+  collection     = process.env.HUBOT_COLLECTION_NAME || "DefaultCollection"
   hubotUrl       = process.env.HUBOT_URL || '/hubot/messagehook'
 
 
