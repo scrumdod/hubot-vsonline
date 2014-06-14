@@ -1,7 +1,5 @@
-Robot                                                = require '../robot'
-Adapter                                              = require '../adapter'
 Client                                               = require 'vso-client'
-{normal,TextMessage,EnterMessage,LeaveMessage,TopicMessage} = require '../message'
+{Robot, Adapter, normal,TextMessage,EnterMessage,LeaveMessage,TopicMessage} = require '../message'
 
 
 class vsOnline extends Adapter
@@ -9,7 +7,7 @@ class vsOnline extends Adapter
   password			 = process.env.HUBOT_VSONLINE_PASSWORD
   userTFID			 = process.env.HUBOT_TFID
   authorization  = 'Basic ' + new Buffer(username + ':' + password).toString('base64')
-  accountName    = process.env.HUBOT_VSONLINE_ACCOUNT + ".visualstudio.com"
+  accountName    = "https://" + process.env.HUBOT_VSONLINE_ACCOUNT + ".visualstudio.com"
   rooms          = process.env.HUBOT_VSONLINE_ROOMS.split(",")
   collection     = process.env.HUBOT_COLLECTION_NAME || "DefaultCollection"
   hubotUrl       = process.env.HUBOT_URL || '/hubot/messagehook'
