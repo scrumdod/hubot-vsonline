@@ -2,7 +2,7 @@
   "name": "hubot-vsonline",
   "version": "0.0.5",
   "description": "A Visual Studio Online adapter for hubot",
-  "main": "index.js",
+  "main": "./src/vsonline-adapter",
   "directories": {
     "test": "test"
   },
