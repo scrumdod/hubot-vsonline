@@ -3,12 +3,13 @@ Client                                               = require 'vso-client'
 
 
 class vsOnline extends Adapter
+  roomsStringList = process.env.HUBOT_VSONLINE_ROOMS || ""
+  
   username			 = process.env.HUBOT_VSONLINE_USERNAME
   password			 = process.env.HUBOT_VSONLINE_PASSWORD
   userTFID			 = process.env.HUBOT_TFID
-  authorization  = 'Basic ' + new Buffer(username + ':' + password).toString('base64')
   accountName    = "https://" + process.env.HUBOT_VSONLINE_ACCOUNT + ".visualstudio.com"
-  rooms          = process.env.HUBOT_VSONLINE_ROOMS.split(",")
+  rooms          = roomsStringList.split(",")
   collection     = process.env.HUBOT_COLLECTION_NAME || "DefaultCollection"
   hubotUrl       = process.env.HUBOT_URL || '/hubot/messagehook'
 
@@ -38,6 +39,12 @@ class vsOnline extends Adapter
     @robot.router.post hubotUrl, (req, res) ->      
       self.processEvent req.body.resource       
       res.send(204)
+      
+    self.emit "connected" 
+    
+    # no rooms to join.
+    if rooms.length == 1 and rooms[0] == ""
+        return    
 
     client = Client.createClient accountName, collection, username, password
     client.getRooms (err, returnRooms) ->
@@ -45,10 +52,13 @@ class vsOnline extends Adapter
         console.log err      
       for room in rooms        
         do(room) ->              
-          find = (i for i in returnRooms when i.name is room)[0]          
-          self.join find.id
-          console.log "I have joined " + find.name
-          self.emit "connected" 
+          find = (i for i in returnRooms when i.name is room)[0]
+          if(find?) 
+            console.log "Room not found " + room
+          else
+            self.join find.id
+            console.log "I have joined " + find.name
+          
 
   processEvent: (event) ->        
     switch event.messageType      
