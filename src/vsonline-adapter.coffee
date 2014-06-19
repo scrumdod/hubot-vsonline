@@ -54,10 +54,10 @@ class vsOnline extends Adapter
         do(room) ->              
           find = (i for i in returnRooms when i.name is room)[0]
           if(find?) 
-            console.log "Room not found " + room
-          else
             self.join find.id
             console.log "I have joined " + find.name
+          else
+            console.log "Room not found " + room            
           
 
   processEvent: (event) ->        
