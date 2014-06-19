@@ -12,6 +12,7 @@ class vsOnline extends Adapter
   rooms          = roomsStringList.split(",")
   collection     = process.env.HUBOT_COLLECTION_NAME || "DefaultCollection"
   hubotUrl       = process.env.HUBOT_URL || '/hubot/messagehook'
+  DebugPassThroughOwnMessages = process.env.HUBOT_VSONLINE_DEBUG_ENABLEPASSTHROUGH || false
 
 
   send: (envelope, strings...) ->   
@@ -62,16 +63,17 @@ class vsOnline extends Adapter
 
   processEvent: (event) ->        
     switch event.messageType      
-      when "normal"
-        id =  event.postedBy.id
-        author =
-          speaker_id: id
-          event_id: event.id
-          id : id
-          displayName : event.postedBy.displayName
-        message = new TextMessage(author, event.content)
-        message.room = event.postedRoomId          
-        @receive message
+      when "normal"        
+        if(DebugPassThroughOwnMessages || event.postedBy.id != userTFID)
+            id =  event.postedBy.id
+            author =
+            speaker_id: id
+            event_id: event.id
+            id : id
+            displayName : event.postedBy.displayName
+            message = new TextMessage(author, event.content)
+            message.room = event.postedRoomId          
+            @receive message
 
 
 exports.use = (robot) ->
