@@ -44,10 +44,9 @@ class vsOnline extends Adapter
     client.joinRoom roomId, userId, userTFID, (err, statusCode) ->      
       console.log "The response from joining was " + statusCode
 
-  run: ->    
-    
+  run: ->
     @robot.router.post hubotUrl, (req, res) =>
-      @.processEvent req.body.resource       
+      @processEvent req.body.resource       
       res.send(204)
       
     @emit "connected" 
@@ -80,8 +79,7 @@ class vsOnline extends Adapter
                 do (user) =>
                     @registerRoomUser user.user.id, user.user.displayName
         if (callback?)
-          callback()
-          
+          callback()          
 
   registerRoomUser: (userId, userName) ->
     @robot.brain.userForId(userId, userName)
