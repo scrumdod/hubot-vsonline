@@ -92,15 +92,15 @@ class vsOnline extends Adapter
             @registerRoomUsersIfNecessary event.postedRoomId, event.content, () =>
               id =  event.postedBy.id
               author =
-              speaker_id: id
-              event_id: event.id
-              id : id
-              displayName : event.postedBy.displayName
+                speaker_id: id
+                event_id: event.id
+                id : id
+                displayName : event.postedBy.displayName
+                room: event.postedRoomId
             
               @registerRoomUser id, event.postedBy.displayName
                         
               message = new TextMessage(author, event.content)
-              message.room = event.postedRoomId          
               @receive message
   
   # Register the room users, if the pattern is a potential command that will 
