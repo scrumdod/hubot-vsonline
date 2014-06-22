@@ -46,8 +46,9 @@ class vsOnline extends Adapter
 
   run: ->
     @robot.router.post hubotUrl, (req, res) =>
-      @processEvent req.body.resource       
-      res.send(204)
+      if(req.body.eventType == "message.posted")
+        @processEvent req.body.resource       
+        res.send(204)
       
     @emit "connected" 
     
@@ -71,37 +72,37 @@ class vsOnline extends Adapter
           
   registerRoomUsers: (client, roomId, callback) =>   
     client.getRoomUsers roomId, (err, roomUsers) =>        
-        if(err)
-            console.log err
-        else
-            roomsRefreshDates[roomId] = Date.now()
-            for user in roomUsers
-                do (user) =>
-                    @registerRoomUser user.user.id, user.user.displayName
-        if (callback?)
-          callback()          
+      if(err)
+        console.log err
+      else
+        roomsRefreshDates[roomId] = Date.now()
+        for user in roomUsers
+          do (user) =>
+            @registerRoomUser user.user.id, user.user.displayName
+      if (callback?)
+        callback()          
 
   registerRoomUser: (userId, userName) ->
-    @robot.brain.userForId(userId, userName)
+    @robot.brain.userForId(userId, { name: userName })
     @robot.brain.data.users[userId].name = userName
 
   processEvent: (event) =>        
     switch event.messageType      
       when "normal"       
         if(DebugPassThroughOwnMessages || event.postedBy.id != userTFID)
-            @registerRoomUsersIfNecessary event.postedRoomId, event.content, () =>
-              id =  event.postedBy.id
-              author =
-                speaker_id: id
-                event_id: event.id
-                id : id
-                displayName : event.postedBy.displayName
-                room: event.postedRoomId
+          @registerRoomUsersIfNecessary event.postedRoomId, event.content, () =>
+            id =  event.postedBy.id
+            author =
+              speaker_id: id
+              event_id: event.id
+              id : id
+              displayName : event.postedBy.displayName
+              room: event.postedRoomId
             
-              @registerRoomUser id, event.postedBy.displayName
+            @registerRoomUser id, event.postedBy.displayName
                         
-              message = new TextMessage(author, event.content)
-              @receive message
+            message = new TextMessage(author, event.content)
+            @receive message
   
   # Register the room users, if the pattern is a potential command that will 
   # require users and if the last registration has happened more than 
