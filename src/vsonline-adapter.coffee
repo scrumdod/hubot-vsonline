@@ -15,15 +15,18 @@ class vsOnline extends Adapter
   DebugPassThroughOwnMessages = process.env.HUBOT_VSONLINE_DEBUG_ENABLEPASSTHROUGH || false
   
   roomsRefreshDates = {}
-  # how much time we allow to elase before getting the room users and register them
-  # on the brain
+  # how much time we allow to elase before getting the room users and register
+  # them on the brain
   MAXSECONDSBETWEENREGISTRATIONS = 10 * 60
-  # if any of these expressions are found in a command, we fetch the room users and place them on the brain
-  # before passing the command to hubot.
-  # We do this to place users into the brain (to support authorization) since VSO doesn't
-  # send the enter room event
-  # these expressions belong to the auth and roles scripts
-  userOrRolesExpressions = [/@?([\w .\-_]+) is (["'\w: \-_]+)[.!]*$/i , /@?(.+) (has) (["'\w: -_]+) (role)/i]
+  # if any of these expressions are found in a command, we fetch the room users
+  # and place them on the brain before passing the command to hubot.
+  # We do this to place users into the brain (to support authorization) since
+  # VSO doesn't send the enter room event these expressions belong to the auth
+  # and roles scripts
+  userOrRolesExpressions = [
+    /@?([\w .\-_]+) is (["'\w: \-_]+)[.!]*$/i ,
+    /@?(.+) (has) (["'\w: -_]+) (role)/i
+  ]
   
   send: (envelope, strings...) ->
     messageToSend =
@@ -90,7 +93,7 @@ class vsOnline extends Adapter
     switch event.messageType
       when "normal"
         if(DebugPassThroughOwnMessages || event.postedBy.id != userTFID)
-          @registerRoomUsersIfNecessary event.postedRoomId, event.content, () =>
+          @registerRoomUsersIfNecessary event.postedRoomId, event.content,() =>
             id =  event.postedBy.id
             author =
               speaker_id: id
@@ -107,12 +110,13 @@ class vsOnline extends Adapter
   # Register the room users, if the pattern is a potential command that will
   # require users and if the last registration has happened more than
   # MAXSECONDSBETWEENREGISTRATIONS seconds ago
-  # it will also refresh if the room users have not been fetched (since last startup))
+  # it will also refresh if the room users have not been fetched (since last
+  # startup)
   registerRoomUsersIfNecessary: (roomId, content, callback) =>
     lastRefresh = roomsRefreshDates[roomId]
     
     secondsSinceLastRegistration = (Date.now() - (lastRefresh || new Date(0))) / 1000
-    if(not lastRefresh? || (secondsSinceLastRegistration >= MAXSECONDSBETWEENREGISTRATIONS && @isAuthorizationRelatedCommand(content)))
+    if(not lastRefresh? || (secondsSinceLastRegistration >= MAXSECONDSBETWEENREGISTRATIONS && isAuthorizationRelatedCommand(content)))
       client = Client.createClient accountName, collection, username, password
       @registerRoomUsers client , roomId, callback
     else
