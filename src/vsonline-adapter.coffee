@@ -8,7 +8,8 @@ class vsOnline extends Adapter
   username		 = process.env.HUBOT_VSONLINE_USERNAME
   password		 = process.env.HUBOT_VSONLINE_PASSWORD
   userTFID		 = process.env.HUBOT_TFID
-  accountName    = "https://" + process.env.HUBOT_VSONLINE_ACCOUNT + ".visualstudio.com"
+  envDomain    = process.env.HUBOT_VSONLINE_ENV_DOMAIN || "visualstudio.com"
+  accountName    = "https://#{process.env.HUBOT_VSONLINE_ACCOUNT}.#{envDomain}"
   rooms          = roomsStringList.split(",")
   collection     = process.env.HUBOT_COLLECTION_NAME || "DefaultCollection"
   hubotUrl       = process.env.HUBOT_URL || '/hubot/messagehook'
