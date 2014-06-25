@@ -3,6 +3,11 @@ Client                                               = require 'vso-client'
 
 
 class vsOnline extends Adapter
+
+  # Variables to define adapter auth to receive messages
+  adapterAuthUser = process.env.HUBOT_VSONLINE_ADAPTER_AUTH_USER
+  adapterAuthPassword = process.env.HUBOT_VSONLINE_ADAPTER_AUTH_PASSWORD
+
   roomsStringList = process.env.HUBOT_VSONLINE_ROOMS || ""
   
   username		 = process.env.HUBOT_VSONLINE_USERNAME
@@ -49,7 +54,14 @@ class vsOnline extends Adapter
       console.log "The response from joining was " + statusCode
 
   run: ->
-    @robot.router.post hubotUrl, (req, res) =>
+  
+    unless adapterAuthUser and adapterAuthPassword
+      @robot.logger.error "Variables HUBOT_VSONLINE_ADAPTER_AUTH_USER and HUBOT_VSONLINE_ADAPTER_AUTH_PASSWORD are required. Exiting process."
+      process.exit(1)
+  
+    auth = require('express').basicAuth adapterAuthUser, adapterAuthPassword
+    @robot.router.post hubotUrl, auth, (req, res) =>
+      @robot.logger.debug "New message posted to adapter"
       if(req.body.eventType == "message.posted")
         @processEvent req.body.resource
         res.send(204)

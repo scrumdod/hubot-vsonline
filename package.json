@@ -13,7 +13,8 @@
     "type": "git",
     "url": "http://github.com/scrumdod/hubot-VSOnline"
   },
-   "dependencies": {
+  "dependencies": {
+    "express": "3.3.4",
     "vso-client": ">=0.0.6"
   },
   "keywords": [
