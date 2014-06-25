@@ -51,7 +51,8 @@ class vsOnline extends Adapter
     client = Client.createClient accountName, collection, username, password
     client.createMessage envelope.room, messageToSend, (err,response) ->
       if err
-        console.log err
+        @robot.logger.error "Failed to send message to user " + username
+        @robot.logger.error err
 
   reply: (envelope, strings...) ->
     for str in strings
@@ -62,7 +63,7 @@ class vsOnline extends Adapter
       userId:userTFID
     client = Client.createClient accountName, collection, username, password
     client.joinRoom roomId, userId, userTFID, (err, statusCode) ->
-      console.log "The response from joining was " + statusCode
+      @robot.logger.info "The response from joining was " + statusCode
 
   run: ->
   
@@ -90,23 +91,23 @@ class vsOnline extends Adapter
     client = Client.createClient accountName, collection, username, password
     client.getRooms (err, returnRooms) =>
       if err
-        console.log err
+        @robot.logger.error err
       for room in rooms
         do(room) =>
           find = (i for i in returnRooms when i.name is room)[0]
           if(find?)
             @registerRoomUsers client, find.id
             @join find.id
-            console.log "I have joined " + find.name
+            @robot.logger.info "I have joined " + find.name
           else
-            console.log "Room not found " + room
+            @robot.logger.warning "Room not found " + room
 
   # configure SSL to listen on the configured port. We need at least a private key
   # and a certificate.        
   configureSSL: =>  
 
     unless SSLPrivateKeyPath? and SSLCertKeyPath?
-      console.log "not enough parameters to enable SSL. I need private key and certificate. Terminating"
+      @robot.logger.error "not enough parameters to enable SSL. I need private key and certificate. Terminating"
       process.exit(1)
       
     sslOptions = {
@@ -122,9 +123,11 @@ class vsOnline extends Adapter
     https.createServer(sslOptions, @robot.router).listen(SSLPort)
 
   registerRoomUsers: (client, roomId, callback) =>
+    @robot.logger.debug "Registering users for room " + roomId
     client.getRoomUsers roomId, (err, roomUsers) =>
       if(err)
-        console.log err
+        @robot.logger.error "Error getting rooms"
+        @robot.logger.error err
       else
         roomsRefreshDates[roomId] = Date.now()
         for user in roomUsers
@@ -140,6 +143,7 @@ class vsOnline extends Adapter
   processEvent: (event) =>
     switch event.messageType
       when "normal"
+        @robot.logger.debug "Analyzing message from room " + event.postedRoomId + " from " + event.postedBy.displayName
         if(DebugPassThroughOwnMessages || event.postedBy.id != userTFID)
           @registerRoomUsersIfNecessary event.postedRoomId, event.content,() =>
             id =  event.postedBy.id
@@ -164,6 +168,9 @@ class vsOnline extends Adapter
     lastRefresh = roomsRefreshDates[roomId]
     
     secondsSinceLastRegistration = (Date.now() - (lastRefresh || new Date(0))) / 1000
+    
+    @robot.logger.info "getting users for first time for room " + roomId unless lastRefresh? 
+
     if(not lastRefresh? || (secondsSinceLastRegistration >= MAXSECONDSBETWEENREGISTRATIONS && @isAuthorizationRelatedCommand(content)))
       client = Client.createClient accountName, collection, username, password
       @registerRoomUsers client , roomId, callback
