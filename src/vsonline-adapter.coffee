@@ -1,19 +1,30 @@
 Client                                               = require 'vso-client'
 {Robot, Adapter, normal,TextMessage,EnterMessage,LeaveMessage,TopicMessage} = require 'hubot'
+https = require('https')
+fs = require('fs')
 
 
 class vsOnline extends Adapter
 
-  # Variables to define adapter auth to receive messages
-  adapterAuthUser = process.env.HUBOT_VSONLINE_ADAPTER_AUTH_USER
-  adapterAuthPassword = process.env.HUBOT_VSONLINE_ADAPTER_AUTH_PASSWORD
+  ## Variables to define adapter auth to receive messages
+  adapterAuthUser       = process.env.HUBOT_VSONLINE_ADAPTER_AUTH_USER
+  adapterAuthPassword   = process.env.HUBOT_VSONLINE_ADAPTER_AUTH_PASSWORD
+
+  ## Variables to support SSL (optional)
+  SSLEnabled        = process.env.HUBOT_VSONLINE_SSL_ENABLE || false
+  SSLPort           = process.env.HUBOT_VSONLINE_SSL_PORT || 443
+  SSLPrivateKeyPath = process.env.HUBOT_VSONLINE_SSL_PRIVATE_KEY_PATH
+  SSLCertKeyPath    = process.env.HUBOT_VSONLINE_SSL_CERT_KEY_PATH
+  SSLRequestCertificate = process.env.HUBOT_VSONLINE_SSL_REQUESTCERT || false
+  SSLRejectUnauthorized = process.env.HUBOT_VSONLINE_SSL_REJECTUNAUTHORIZED || false
+  SSLCACertPath     = process.env.HUBOT_VSONLINE_SSL_CA_KEY_PATH
 
   roomsStringList = process.env.HUBOT_VSONLINE_ROOMS || ""
   
   username		 = process.env.HUBOT_VSONLINE_USERNAME
   password		 = process.env.HUBOT_VSONLINE_PASSWORD
   userTFID		 = process.env.HUBOT_TFID
-  envDomain    = process.env.HUBOT_VSONLINE_ENV_DOMAIN || "visualstudio.com"
+  envDomain      = process.env.HUBOT_VSONLINE_ENV_DOMAIN || "visualstudio.com"
   accountName    = "https://#{process.env.HUBOT_VSONLINE_ACCOUNT}.#{envDomain}"
   rooms          = roomsStringList.split(",")
   collection     = process.env.HUBOT_COLLECTION_NAME || "DefaultCollection"
@@ -56,10 +67,14 @@ class vsOnline extends Adapter
   run: ->
   
     unless adapterAuthUser and adapterAuthPassword
-      @robot.logger.error "Variables HUBOT_VSONLINE_ADAPTER_AUTH_USER and HUBOT_VSONLINE_ADAPTER_AUTH_PASSWORD are required. Exiting process."
+      @robot.logger.error "not enough parameters for auth. I need HUBOT_VSONLINE_ADAPTER_AUTH_USER and HUBOT_VSONLINE_ADAPTER_AUTH_PASSWORD variables. Terminating"
       process.exit(1)
-  
+
+    if(SSLEnabled)
+      @configureSSL auth  
+    
     auth = require('express').basicAuth adapterAuthUser, adapterAuthPassword
+
     @robot.router.post hubotUrl, auth, (req, res) =>
       @robot.logger.debug "New message posted to adapter"
       if(req.body.eventType == "message.posted")
@@ -85,7 +100,27 @@ class vsOnline extends Adapter
             console.log "I have joined " + find.name
           else
             console.log "Room not found " + room
-          
+
+  # configure SSL to listen on the configured port. We need at least a private key
+  # and a certificate.        
+  configureSSL: =>  
+
+    unless SSLPrivateKeyPath? and SSLCertKeyPath?
+      console.log "not enough parameters to enable SSL. I need private key and certificate. Terminating"
+      process.exit(1)
+      
+    sslOptions = {
+      requestCert: SSLRequestCertificate,
+      rejectUnauthorized: SSLRejectUnauthorized,
+      key: fs.readFileSync(SSLPrivateKeyPath),
+      cert: fs.readFileSync(SSLCertKeyPath)
+    }
+   
+    if (SSLCACertPath?)
+      sslOptions.ca = ca: fs.readFileSync(SSLCACertPath)
+   
+    https.createServer(sslOptions, @robot.router).listen(SSLPort)
+
   registerRoomUsers: (client, roomId, callback) =>
     client.getRoomUsers roomId, (err, roomUsers) =>
       if(err)
