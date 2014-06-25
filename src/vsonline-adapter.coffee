@@ -116,7 +116,7 @@ class vsOnline extends Adapter
     lastRefresh = roomsRefreshDates[roomId]
     
     secondsSinceLastRegistration = (Date.now() - (lastRefresh || new Date(0))) / 1000
-    if(not lastRefresh? || (secondsSinceLastRegistration >= MAXSECONDSBETWEENREGISTRATIONS && isAuthorizationRelatedCommand(content)))
+    if(not lastRefresh? || (secondsSinceLastRegistration >= MAXSECONDSBETWEENREGISTRATIONS && @isAuthorizationRelatedCommand(content)))
       client = Client.createClient accountName, collection, username, password
       @registerRoomUsers client , roomId, callback
     else
