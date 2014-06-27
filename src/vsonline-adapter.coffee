@@ -7,8 +7,8 @@ fs = require('fs')
 class vsOnline extends Adapter
 
   ## Variables to define adapter auth to receive messages
-  adapterAuthUser       = process.env.HUBOT_VSONLINE_ADAPTER_AUTH_USER
-  adapterAuthPassword   = process.env.HUBOT_VSONLINE_ADAPTER_AUTH_PASSWORD
+  adapterAuthUser       = process.env.HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_USERNAME
+  adapterAuthPassword   = process.env.HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_PASSWORD
 
   ## Variables to support SSL (optional)
   SSLEnabled        = process.env.HUBOT_VSONLINE_SSL_ENABLE || false
@@ -18,12 +18,13 @@ class vsOnline extends Adapter
   SSLRequestCertificate = process.env.HUBOT_VSONLINE_SSL_REQUESTCERT || false
   SSLRejectUnauthorized = process.env.HUBOT_VSONLINE_SSL_REJECTUNAUTHORIZED || false
   SSLCACertPath     = process.env.HUBOT_VSONLINE_SSL_CA_KEY_PATH
+  
+  hubotUserTFID = null
 
   roomsStringList = process.env.HUBOT_VSONLINE_ROOMS || ""
   
   username		 = process.env.HUBOT_VSONLINE_USERNAME
   password		 = process.env.HUBOT_VSONLINE_PASSWORD
-  userTFID		 = process.env.HUBOT_TFID
   envDomain      = process.env.HUBOT_VSONLINE_ENV_DOMAIN || "visualstudio.com"
   accountName    = "https://#{process.env.HUBOT_VSONLINE_ACCOUNT}.#{envDomain}"
   rooms          = roomsStringList.split(",")
@@ -60,21 +61,37 @@ class vsOnline extends Adapter
 
   join: (roomId) ->
     userId=
-      userId:userTFID
+      userId:hubotUserTFID
     client = Client.createClient accountName, collection, username, password
-    client.joinRoom roomId, userId, userTFID, (err, statusCode) ->
+    client.joinRoom roomId, userId, hubotUserTFID, (err, statusCode) ->
       @robot.logger.info "The response from joining was " + statusCode
 
   run: ->
   
     unless adapterAuthUser and adapterAuthPassword
-      @robot.logger.error "not enough parameters for auth. I need HUBOT_VSONLINE_ADAPTER_AUTH_USER and HUBOT_VSONLINE_ADAPTER_AUTH_PASSWORD variables. Terminating"
+      @robot.logger.error "not enough parameters for auth. I need HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_USER and HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_PASSWORD variables. Terminating"
       process.exit(1)
+    
+    client = Client.createClient accountName, collection, username, password
+    
+    client.getConnectionData (err, connectionData) =>
+      if err
+        @robot.logger.error "Failed to get hubot TF Id. Can't continue. Terminating"
+        process.exit(1)
+      
+      hubotUserTFID = connectionData.authenticatedUser.id
+      
+      @robot.logger.debug "Using hubot TF Id : " + hubotUserTFID
+      @initialize client
+    
+  initialize: (client) ->
 
-    if(SSLEnabled)
-      @configureSSL auth  
+    @robot.logger.info "Initialize"
     
     auth = require('express').basicAuth adapterAuthUser, adapterAuthPassword
+
+    if(SSLEnabled)
+      @configureSSL auth
 
     @robot.router.post hubotUrl, auth, (req, res) =>
       @robot.logger.debug "New message posted to adapter"
@@ -87,8 +104,7 @@ class vsOnline extends Adapter
     # no rooms to join.
     if rooms.length == 1 and rooms[0] == ""
       return
-
-    client = Client.createClient accountName, collection, username, password
+    
     client.getRooms (err, returnRooms) =>
       if err
         @robot.logger.error err
@@ -144,7 +160,7 @@ class vsOnline extends Adapter
     switch event.messageType
       when "normal"
         @robot.logger.debug "Analyzing message from room " + event.postedRoomId + " from " + event.postedBy.displayName
-        if(DebugPassThroughOwnMessages || event.postedBy.id != userTFID)
+        if(DebugPassThroughOwnMessages || event.postedBy.id != hubotUserTFID)
           @registerRoomUsersIfNecessary event.postedRoomId, event.content,() =>
             id =  event.postedBy.id
             author =
