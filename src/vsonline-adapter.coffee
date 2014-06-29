@@ -71,22 +71,10 @@ class vsOnline extends Adapter
     unless adapterAuthUser and adapterAuthPassword
       @robot.logger.error "not enough parameters for auth. I need HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_USER and HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_PASSWORD variables. Terminating"
       process.exit(1)
-    
-    client = Client.createClient accountName, collection, username, password
-    
-    client.getConnectionData (err, connectionData) =>
-      if err
-        @robot.logger.error "Failed to get hubot TF Id. Can't continue. Terminating"
-        process.exit(1)
-      
-      hubotUserTFID = connectionData.authenticatedUser.id
-      
-      @robot.logger.debug "Using hubot TF Id : " + hubotUserTFID
-      @initialize client
-    
-  initialize: (client) ->
 
     @robot.logger.info "Initialize"
+            
+    client = Client.createClient accountName, collection, username, password
     
     auth = require('express').basicAuth adapterAuthUser, adapterAuthPassword
 
@@ -157,23 +145,41 @@ class vsOnline extends Adapter
     @robot.brain.data.users[userId].name = userName
 
   processEvent: (event) =>
-    switch event.messageType
-      when "normal"
-        @robot.logger.debug "Analyzing message from room " + event.postedRoomId + " from " + event.postedBy.displayName
-        if(DebugPassThroughOwnMessages || event.postedBy.id != hubotUserTFID)
-          @registerRoomUsersIfNecessary event.postedRoomId, event.content,() =>
-            id =  event.postedBy.id
-            author =
-              speaker_id: id
-              event_id: event.id
-              id : id
-              displayName : event.postedBy.displayName
-              room: event.postedRoomId
+    @ensureTFId () =>
+      switch event.messageType
+        when "normal"
+          @robot.logger.debug "Analyzing message from room " + event.postedRoomId + " from " + event.postedBy.displayName
+          if(DebugPassThroughOwnMessages || event.postedBy.id != hubotUserTFID)
+            @registerRoomUsersIfNecessary event.postedRoomId, event.content,() =>
+              id =  event.postedBy.id
+              author =
+                speaker_id: id
+                event_id: event.id
+                id : id
+                displayName : event.postedBy.displayName
+                room: event.postedRoomId
             
-            @registerRoomUser id, event.postedBy.displayName
+              @registerRoomUser id, event.postedBy.displayName
                         
-            message = new TextMessage(author, event.content)
-            @receive message
+              message = new TextMessage(author, event.content)
+              @receive message
+  
+  # before processing any command we need to ensure we have the value for
+  # hubot user TF Id
+  ensureTFId : (callback) =>
+    if hubotUserTFID == null && DebugPassThroughOwnMessages == false
+      @robot.logger.debug "Getting TF ID"
+      client = Client.createClient accountName, collection, username, password
+      client.getConnectionData (err, connectionData) =>
+        if err
+          @robot.logger.error "Failed to get hubot TF Id. will not be able to respond to commands. Potential command ignored"        
+        else
+          hubotUserTFID = connectionData.authenticatedUser.id
+          if (callback?)
+            callback()
+    else
+      if (callback?)
+        callback()
   
   # Register the room users, if the pattern is a potential command that will
   # require users and if the last registration has happened more than
