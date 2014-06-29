@@ -59,12 +59,15 @@ class vsOnline extends Adapter
     for str in strings
       @send envelope, "@#{envelope.user.displayName}: #{str}"
 
-  join: (roomId) ->
+  join: (room, roomId) =>
     userId=
       userId:hubotUserTFID
     client = Client.createClient accountName, collection, username, password
-    client.joinRoom roomId, userId, hubotUserTFID, (err, statusCode) ->
-      @robot.logger.info "The response from joining was " + statusCode
+    client.joinRoom roomId, userId, hubotUserTFID, (err, statusCode) =>
+      if err
+        @robot.logger.error "Error joining " + room + " " + err
+      else
+        @robot.logger.info "Joined room " + room
 
   run: ->
   
@@ -96,15 +99,17 @@ class vsOnline extends Adapter
     client.getRooms (err, returnRooms) =>
       if err
         @robot.logger.error err
-      for room in rooms
-        do(room) =>
-          find = (i for i in returnRooms when i.name is room)[0]
-          if(find?)
-            @registerRoomUsers client, find.id
-            @join find.id
-            @robot.logger.info "I have joined " + find.name
-          else
-            @robot.logger.warning "Room not found " + room
+      else
+        @ensureTFId () =>
+          for room in rooms
+            do(room) =>
+              find = (i for i in returnRooms when i.name is room)[0]
+              if(find?)
+                @registerRoomUsers client, find.id
+                @join find.name, find.id                
+              else
+                @robot.logger.warning "Room not found " + room
+                  
 
   # configure SSL to listen on the configured port. We need at least a private key
   # and a certificate.        
@@ -167,7 +172,7 @@ class vsOnline extends Adapter
   # before processing any command we need to ensure we have the value for
   # hubot user TF Id
   ensureTFId : (callback) =>
-    if hubotUserTFID == null && DebugPassThroughOwnMessages == false
+    if hubotUserTFID == null
       @robot.logger.debug "Getting TF ID"
       client = Client.createClient accountName, collection, username, password
       client.getConnectionData (err, connectionData) =>
