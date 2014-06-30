@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "express": "3.3.4",
-    "vso-client": ">=0.0.6"
+    "vso-client": ">=0.1.2"
   },
   "keywords": [
     "hubot",

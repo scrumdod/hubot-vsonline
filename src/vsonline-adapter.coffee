@@ -1,19 +1,31 @@
 Client                                               = require 'vso-client'
 {Robot, Adapter, normal,TextMessage,EnterMessage,LeaveMessage,TopicMessage} = require 'hubot'
+https = require('https')
+fs = require('fs')
 
 
 class vsOnline extends Adapter
 
-  # Variables to define adapter auth to receive messages
-  adapterAuthUser = process.env.HUBOT_VSONLINE_ADAPTER_AUTH_USER
-  adapterAuthPassword = process.env.HUBOT_VSONLINE_ADAPTER_AUTH_PASSWORD
+  ## Variables to define adapter auth to receive messages
+  adapterAuthUser       = process.env.HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_USERNAME
+  adapterAuthPassword   = process.env.HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_PASSWORD
+
+  ## Variables to support SSL (optional)
+  SSLEnabled        = process.env.HUBOT_VSONLINE_SSL_ENABLE || false
+  SSLPort           = process.env.HUBOT_VSONLINE_SSL_PORT || 443
+  SSLPrivateKeyPath = process.env.HUBOT_VSONLINE_SSL_PRIVATE_KEY_PATH
+  SSLCertKeyPath    = process.env.HUBOT_VSONLINE_SSL_CERT_KEY_PATH
+  SSLRequestCertificate = process.env.HUBOT_VSONLINE_SSL_REQUESTCERT || false
+  SSLRejectUnauthorized = process.env.HUBOT_VSONLINE_SSL_REJECTUNAUTHORIZED || false
+  SSLCACertPath     = process.env.HUBOT_VSONLINE_SSL_CA_KEY_PATH
+  
+  hubotUserTFID = null
 
   roomsStringList = process.env.HUBOT_VSONLINE_ROOMS || ""
   
   username		 = process.env.HUBOT_VSONLINE_USERNAME
   password		 = process.env.HUBOT_VSONLINE_PASSWORD
-  userTFID		 = process.env.HUBOT_TFID
-  envDomain    = process.env.HUBOT_VSONLINE_ENV_DOMAIN || "visualstudio.com"
+  envDomain      = process.env.HUBOT_VSONLINE_ENV_DOMAIN || "visualstudio.com"
   accountName    = "https://#{process.env.HUBOT_VSONLINE_ACCOUNT}.#{envDomain}"
   rooms          = roomsStringList.split(",")
   collection     = process.env.HUBOT_COLLECTION_NAME || "DefaultCollection"
@@ -40,26 +52,41 @@ class vsOnline extends Adapter
     client = Client.createClient accountName, collection, username, password
     client.createMessage envelope.room, messageToSend, (err,response) ->
       if err
-        console.log err
+        @robot.logger.error "Failed to send message to user " + username
+        @robot.logger.error err
 
   reply: (envelope, strings...) ->
     for str in strings
       @send envelope, "@#{envelope.user.displayName}: #{str}"
 
-  join: (roomId) ->
+  join: (room, roomId) =>
     userId=
-      userId:userTFID
+      userId:hubotUserTFID
     client = Client.createClient accountName, collection, username, password
-    client.joinRoom roomId, userId, userTFID, (err, statusCode) ->
-      console.log "The response from joining was " + statusCode
+    client.joinRoom roomId, userId, hubotUserTFID, (err, statusCode) =>
+      if err
+        @robot.logger.error "Error joining " + room + " " + err
+      else
+        if statusCode == 200 || statusCode == 204
+          @robot.logger.info "Joined room " + room
+        else
+           @robot.logger.info "Failed to join room with status " + statusCode
 
   run: ->
   
     unless adapterAuthUser and adapterAuthPassword
-      @robot.logger.error "Variables HUBOT_VSONLINE_ADAPTER_AUTH_USER and HUBOT_VSONLINE_ADAPTER_AUTH_PASSWORD are required. Exiting process."
+      @robot.logger.error "not enough parameters for auth. I need HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_USER and HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_PASSWORD variables. Terminating"
       process.exit(1)
-  
+
+    @robot.logger.info "Initialize"
+            
+    client = Client.createClient accountName, collection, username, password
+    
     auth = require('express').basicAuth adapterAuthUser, adapterAuthPassword
+
+    if(SSLEnabled)
+      @configureSSL auth
+
     @robot.router.post hubotUrl, auth, (req, res) =>
       @robot.logger.debug "New message posted to adapter"
       if(req.body.eventType == "message.posted")
@@ -71,25 +98,48 @@ class vsOnline extends Adapter
     # no rooms to join.
     if rooms.length == 1 and rooms[0] == ""
       return
-
-    client = Client.createClient accountName, collection, username, password
+    
     client.getRooms (err, returnRooms) =>
       if err
-        console.log err
-      for room in rooms
-        do(room) =>
-          find = (i for i in returnRooms when i.name is room)[0]
-          if(find?)
-            @registerRoomUsers client, find.id
-            @join find.id
-            console.log "I have joined " + find.name
-          else
-            console.log "Room not found " + room
-          
+        @robot.logger.error err
+      else
+        @ensureTFId () =>
+          for room in rooms
+            do(room) =>
+              find = (i for i in returnRooms when i.name is room)[0]
+              if(find?)
+                @registerRoomUsers client, find.id
+                @join find.name, find.id                
+              else
+                @robot.logger.warning "Room not found " + room
+                  
+
+  # configure SSL to listen on the configured port. We need at least a private key
+  # and a certificate.        
+  configureSSL: =>  
+
+    unless SSLPrivateKeyPath? and SSLCertKeyPath?
+      @robot.logger.error "not enough parameters to enable SSL. I need private key and certificate. Terminating"
+      process.exit(1)
+      
+    sslOptions = {
+      requestCert: SSLRequestCertificate,
+      rejectUnauthorized: SSLRejectUnauthorized,
+      key: fs.readFileSync(SSLPrivateKeyPath),
+      cert: fs.readFileSync(SSLCertKeyPath)
+    }
+   
+    if (SSLCACertPath?)
+      sslOptions.ca = ca: fs.readFileSync(SSLCACertPath)
+   
+    https.createServer(sslOptions, @robot.router).listen(SSLPort)
+
   registerRoomUsers: (client, roomId, callback) =>
+    @robot.logger.debug "Registering users for room " + roomId
     client.getRoomUsers roomId, (err, roomUsers) =>
       if(err)
-        console.log err
+        @robot.logger.error "Error getting rooms"
+        @robot.logger.error err
       else
         roomsRefreshDates[roomId] = Date.now()
         for user in roomUsers
@@ -103,22 +153,41 @@ class vsOnline extends Adapter
     @robot.brain.data.users[userId].name = userName
 
   processEvent: (event) =>
-    switch event.messageType
-      when "normal"
-        if(DebugPassThroughOwnMessages || event.postedBy.id != userTFID)
-          @registerRoomUsersIfNecessary event.postedRoomId, event.content,() =>
-            id =  event.postedBy.id
-            author =
-              speaker_id: id
-              event_id: event.id
-              id : id
-              displayName : event.postedBy.displayName
-              room: event.postedRoomId
+    @ensureTFId () =>
+      switch event.messageType
+        when "normal"
+          @robot.logger.debug "Analyzing message from room " + event.postedRoomId + " from " + event.postedBy.displayName
+          if(DebugPassThroughOwnMessages || event.postedBy.id != hubotUserTFID)
+            @registerRoomUsersIfNecessary event.postedRoomId, event.content,() =>
+              id =  event.postedBy.id
+              author =
+                speaker_id: id
+                event_id: event.id
+                id : id
+                displayName : event.postedBy.displayName
+                room: event.postedRoomId
             
-            @registerRoomUser id, event.postedBy.displayName
+              @registerRoomUser id, event.postedBy.displayName
                         
-            message = new TextMessage(author, event.content)
-            @receive message
+              message = new TextMessage(author, event.content)
+              @receive message
+  
+  # before processing any command we need to ensure we have the value for
+  # hubot user TF Id
+  ensureTFId : (callback) =>
+    if hubotUserTFID == null
+      @robot.logger.debug "Getting TF ID"
+      client = Client.createClient accountName, collection, username, password
+      client.getConnectionData (err, connectionData) =>
+        if err or not connectionData.authenticatedUser?.id?
+          @robot.logger.error "Failed to get hubot TF Id. will not be able to respond to commands. Potential command ignored"
+        else
+          hubotUserTFID = connectionData.authenticatedUser.id
+          if (callback?)
+            callback()
+    else
+      if (callback?)
+        callback()
   
   # Register the room users, if the pattern is a potential command that will
   # require users and if the last registration has happened more than
@@ -129,6 +198,9 @@ class vsOnline extends Adapter
     lastRefresh = roomsRefreshDates[roomId]
     
     secondsSinceLastRegistration = (Date.now() - (lastRefresh || new Date(0))) / 1000
+    
+    @robot.logger.info "getting users for first time for room " + roomId unless lastRefresh? 
+
     if(not lastRefresh? || (secondsSinceLastRegistration >= MAXSECONDSBETWEENREGISTRATIONS && @isAuthorizationRelatedCommand(content)))
       client = Client.createClient accountName, collection, username, password
       @registerRoomUsers client , roomId, callback
