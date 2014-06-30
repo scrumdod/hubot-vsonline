@@ -75,7 +75,7 @@ class vsOnline extends Adapter
   run: ->
   
     unless adapterAuthUser and adapterAuthPassword
-      @robot.logger.error "not enough parameters for auth. I need HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_USER and HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_PASSWORD variables. Terminating"
+      @robot.logger.error "not enough parameters for auth. I need HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_USERNAME and HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_PASSWORD variables. Terminating"
       process.exit(1)
 
     @robot.logger.info "Initialize"
