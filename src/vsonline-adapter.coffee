@@ -67,7 +67,10 @@ class vsOnline extends Adapter
       if err
         @robot.logger.error "Error joining " + room + " " + err
       else
-        @robot.logger.info "Joined room " + room
+        if statusCode == 200 || statusCode == 204
+          @robot.logger.info "Joined room " + room
+        else
+           @robot.logger.info "Failed to join room with status " + statusCode
 
   run: ->
   
@@ -176,8 +179,8 @@ class vsOnline extends Adapter
       @robot.logger.debug "Getting TF ID"
       client = Client.createClient accountName, collection, username, password
       client.getConnectionData (err, connectionData) =>
-        if err
-          @robot.logger.error "Failed to get hubot TF Id. will not be able to respond to commands. Potential command ignored"        
+        if err or not connectionData.authenticatedUser?.id?
+          @robot.logger.error "Failed to get hubot TF Id. will not be able to respond to commands. Potential command ignored"
         else
           hubotUserTFID = connectionData.authenticatedUser.id
           if (callback?)
