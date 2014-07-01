@@ -36,6 +36,11 @@ class vsOnline extends Adapter
   # how much time we allow to elase before getting the room users and register
   # them on the brain
   MAXSECONDSBETWEENREGISTRATIONS = 10 * 60
+  
+  # Periodic interval to which we automatically rejoin rooms,so hubot doesn't appear idle
+  # rejoin every 23 hours
+  REJOININTERVAL = 1000 * 60 * 60 * 23.5
+  
   # if any of these expressions are found in a command, we fetch the room users
   # and place them on the brain before passing the command to hubot.
   # We do this to place users into the brain (to support authorization) since
@@ -79,8 +84,6 @@ class vsOnline extends Adapter
       process.exit(1)
 
     @robot.logger.info "Initialize"
-            
-    client = Client.createClient accountName, collection, username, password
     
     auth = require('express').basicAuth adapterAuthUser, adapterAuthPassword
 
@@ -94,11 +97,30 @@ class vsOnline extends Adapter
         res.send(204)
       
     @emit "connected"
-    
+    @joinRooms()
+    @setPeriodicRoomJoin()
+
+
+  setPeriodicRoomJoin: =>
+    # if there are rooms to join, set interval
+    if rooms.length >= 1 and rooms[0] != ""
+      @robot.logger.info "setting rejoin timer"
+      setInterval @rejoinRooms, REJOININTERVAL
+    else
+      @robot.logger.info "setting rejoin timer. No rooms to rejoin"
+      
+  rejoinRooms: =>
+    @robot.logger.info "rejoining rooms"
+    @joinRooms()
+        
+  joinRooms: =>
     # no rooms to join.
     if rooms.length == 1 and rooms[0] == ""
       return
     
+    @robot.logger.debug "joining rooms"
+    
+    client = Client.createClient accountName, collection, username, password
     client.getRooms (err, returnRooms) =>
       if err
         @robot.logger.error err
