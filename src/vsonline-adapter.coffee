@@ -24,7 +24,7 @@ class vsOnline extends Adapter
   sbConnStr = process.env.HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_SAS_CONNSTR
   sbQueue = process.env.HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_QUEUE
   sbRecvMsgTimeoutInS = process.env.HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_RECV_MSG_TIMEOUT or 55
-  sbRecvLoopTimeoutInS = process.env.HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_RECV_LOOP_TIMEOUT or 0
+  sbRecvLoopTimeoutInMs = (process.env.HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_RECV_LOOP_TIMEOUT or 0) * 1000
 
   ## Variables to support SSL (optional)
   SSLEnabled        = process.env.HUBOT_VSONLINE_SSL_ENABLE || false
@@ -188,7 +188,7 @@ class vsOnline extends Adapter
           else
             @robot.logger.warning "Couldn't receive any message from Q: \
               #{util.inspect err}"
-            setTimeout recv, sbRecvLoopTimeoutInS
+            setTimeout recv, sbRecvLoopTimeoutInMs
           
       
     #start receiving loop
