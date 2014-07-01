@@ -21,7 +21,7 @@ class vsOnline extends Adapter
   adapterAuthPassword   = process.env.HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_PASSWORD
   
   ## Variables to define adapter service bus queue to receive messages
-  sbConnStr = process.env.HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_SAS_CONNSTR
+  sbConnStr = process.env.HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_CONNECTION
   sbQueue = process.env.HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_QUEUE
   sbRecvMsgTimeoutInS = process.env.HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_RECV_MSG_TIMEOUT or 55
   sbRecvLoopTimeoutInMs = (process.env.HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_RECV_LOOP_TIMEOUT or 0) * 1000
@@ -102,7 +102,7 @@ class vsOnline extends Adapter
       process.exit(1)
 
     if adapterRecvMode is 'servicebus' and not (sbConnStr and sbQueue)
-      @robot.logger.error "Not enough parameters for service bus. I need HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_SAS_CONNSTR and HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_QUEUE variables. Terminating"
+      @robot.logger.error "Not enough parameters for service bus. I need HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_CONNECTION and HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_QUEUE variables. Terminating"
       process.exit(1)
 
 

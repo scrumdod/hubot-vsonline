@@ -43,7 +43,7 @@ The VSOnline adapter supports two modes to receive team room messages:
 To use this mode the adapter requires the following environment variables
 
     HUBOT_VSONLINE_ADAPTER_RECV_MODE - must be set to  servicebus.
-    HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_SAS_CONNSTR - The Service Bus SAS connection string
+    HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_CONNECTION - The Service Bus SAS connection string
     HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_QUEUE - The Service Bus queue name
 
 
