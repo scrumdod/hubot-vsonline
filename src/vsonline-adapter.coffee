@@ -25,6 +25,7 @@ class vsOnline extends Adapter
   sbQueue = process.env.HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_QUEUE
   sbRecvMsgTimeoutInS = process.env.HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_RECV_MSG_TIMEOUT or 55
   sbRecvLoopTimeoutInMs = (process.env.HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_RECV_LOOP_TIMEOUT or 0) * 1000
+  sbRecvErrorTimeoutInMs = (process.env.HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_RECV_ERROR_TIMEOUT or 60) * 1000
 
   ## Variables to support SSL (optional)
   SSLEnabled        = process.env.HUBOT_VSONLINE_SSL_ENABLE || false
@@ -186,10 +187,14 @@ class vsOnline extends Adapter
             event = JSON.parse receivedMessage.body
             @processEvent event.resource if event.eventType is "message.posted"
           else
-            @robot.logger.warning "Couldn't receive any message from Q: \
-              #{util.inspect err}"
-            setTimeout recv, sbRecvLoopTimeoutInMs
-          
+            # differentiate between no messages from error
+            if typeof err is 'string'
+              @robot.logger.debug err
+              setTimeout recv, sbRecvLoopTimeoutInMs
+            else
+              @robot.logger.error "Error while receiving message from Q: \
+                #{util.inspect err}. We'll retry again in #{sbRecvErrorTimeoutInMs} ms"
+              setTimeout recv, sbRecvErrorTimeoutInMs
       
     #start receiving loop
     recv()
