@@ -28,7 +28,26 @@ The VSOnline adapter requires the following environment variables.
 	HUBOT_VSONLINE_ACCOUNT- The name of your Visual Studio Online account e.g. if the url that you connect to is "https://yourname.visualstudio.com/" then just use 'your name'
 	HUBOT_VSONLINE_ROOMS - A comma separated list of rooms that you would like hubot to join
 	PORT - Port number for hubot to listen on when receiving messages from the Team Room.  This will default to 8080
+    HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_USERNAME - The adapter's endpoint basic authentication username
+    HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_PASSWORD - The adapter's endpoint basic authentication password
    
+
+The VSOnline adapter supports two modes to receive team room messages:
+
+* HTTP - This is the default mode where the adapter listens for team room messages in a HTTP endpoint.
+* Service Bus Queue - In this mode the adapter reads messages from an Azure Service Bus Queue. 
+
+
+### Azure Service Bus Queue 
+
+To use this mode the adapter requires the following environment variables
+
+    HUBOT_VSONLINE_ADAPTER_RECV_MODE - must be set to  servicebus.
+    HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_CONNECTION - The Service Bus SAS connection string
+    HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_QUEUE - The Service Bus queue name
+
+
+
 ## License
 
 MIT

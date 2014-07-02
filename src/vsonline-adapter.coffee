@@ -2,13 +2,30 @@ Client                                               = require 'vso-client'
 {Robot, Adapter, normal,TextMessage,EnterMessage,LeaveMessage,TopicMessage} = require 'hubot'
 https = require('https')
 fs = require('fs')
+azure = require 'azure'
+util = require 'util'
 
+
+VSONLINE_ADAPTER_RECV_VALID_MODES = [
+  'http',
+  'servicebus'
+]
 
 class vsOnline extends Adapter
 
-  ## Variables to define adapter auth to receive messages
+  ## Defines the adapter mode
+  adapterRecvMode = process.env.HUBOT_VSONLINE_ADAPTER_RECV_MODE or 'http'
+
+  ## Variables to define adapter basic auth to receive messages
   adapterAuthUser       = process.env.HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_USERNAME
   adapterAuthPassword   = process.env.HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_PASSWORD
+  
+  ## Variables to define adapter service bus queue to receive messages
+  sbConnStr = process.env.HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_CONNECTION
+  sbQueue = process.env.HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_QUEUE
+  sbRecvMsgTimeoutInS = process.env.HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_RECV_MSG_TIMEOUT or 55
+  sbRecvLoopTimeoutInMs = (process.env.HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_RECV_LOOP_TIMEOUT or 0) * 1000
+  sbRecvErrorTimeoutInMs = (process.env.HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_RECV_ERROR_TIMEOUT or 60) * 1000
 
   ## Variables to support SSL (optional)
   SSLEnabled        = process.env.HUBOT_VSONLINE_SSL_ENABLE || false
@@ -79,22 +96,30 @@ class vsOnline extends Adapter
 
   run: ->
   
-    unless adapterAuthUser and adapterAuthPassword
-      @robot.logger.error "not enough parameters for auth. I need HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_USERNAME and HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_PASSWORD variables. Terminating"
+    unless adapterRecvMode in VSONLINE_ADAPTER_RECV_VALID_MODES
+      @robot.logger.error "Invalid #{adapterRecvMode} receive mode set in variable \
+        HUBOT_VSONLINE_ADAPTER_RECV_MODE. Valid modes are #{util.inspect(VSONLINE_ADAPTER_RECV_VALID_MODES)}.\
+        Terminating."
+      process.exit(1)
+      
+    if adapterRecvMode is 'http' and not (adapterAuthUser and adapterAuthPassword)
+      @robot.logger.error "Not enough parameters for http basic auth. I need HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_USERNAME and HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_PASSWORD variables. Terminating"
       process.exit(1)
 
+    if adapterRecvMode is 'servicebus' and not (sbConnStr and sbQueue)
+      @robot.logger.error "Not enough parameters for service bus. I need HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_CONNECTION and HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_QUEUE variables. Terminating"
+      process.exit(1)
+
+
     @robot.logger.info "Initialize"
-    
-    auth = require('express').basicAuth adapterAuthUser, adapterAuthPassword
-
-    if(SSLEnabled)
-      @configureSSL auth
-
-    @robot.router.post hubotUrl, auth, (req, res) =>
-      @robot.logger.debug "New message posted to adapter"
-      if(req.body.eventType == "message.posted")
-        @processEvent req.body.resource
-        res.send(204)
+      
+    if adapterRecvMode is 'http'
+      @configureHttpReceiver()
+    else if adapterRecvMode is 'servicebus'
+      @configureServiceBusReceiver()
+    else
+      @robot.logger.error "Receive mode #{adaperRecvMode} not suported"
+      process.exit(1)
       
     @emit "connected"
     @joinRooms()
@@ -115,8 +140,7 @@ class vsOnline extends Adapter
         
   joinRooms: =>
     # no rooms to join.
-    if rooms.length == 1 and rooms[0] == ""
-      return
+    return if rooms.length == 1 and rooms[0] == ""
     
     @robot.logger.debug "joining rooms"
     
@@ -135,6 +159,19 @@ class vsOnline extends Adapter
               else
                 @robot.logger.warning "Room not found " + room
                   
+
+  configureHttpReceiver: => 
+    auth = require('express').basicAuth adapterAuthUser, adapterAuthPassword
+
+    if(SSLEnabled)
+      @configureSSL auth
+
+    @robot.router.post hubotUrl, auth, (req, res) =>
+      @robot.logger.debug "New message posted to adapter"
+      if(req.body.eventType == "message.posted")
+        @processEvent req.body.resource
+        res.send(204)
+  
 
   # configure SSL to listen on the configured port. We need at least a private key
   # and a certificate.        
@@ -155,6 +192,35 @@ class vsOnline extends Adapter
       sslOptions.ca = ca: fs.readFileSync(SSLCACertPath)
    
     https.createServer(sslOptions, @robot.router).listen(SSLPort)
+
+  configureServiceBusReceiver: =>
+  
+    serviceBusSvc = azure.createServiceBusService(sbConnStr)
+
+    recv = ()=>
+      @robot.logger.debug "Starting a new cycle to read messages from SB Q"
+      serviceBusSvc.receiveQueueMessage sbQueue,
+        timeoutIntervalInS: sbRecvMsgTimeoutInS,
+        (err, receivedMessage) =>
+          if !err
+            @robot.logger.debug "New message received from Q"
+            #schedule a new loop immediately
+            setTimeout recv, 0  
+            event = JSON.parse receivedMessage.body
+            @processEvent event.resource if event.eventType is "message.posted"
+          else
+            # differentiate between no messages from error
+            if typeof err is 'string'
+              @robot.logger.debug err
+              setTimeout recv, sbRecvLoopTimeoutInMs
+            else
+              @robot.logger.error "Error while receiving message from Q: \
+                #{util.inspect err}. We'll retry again in #{sbRecvErrorTimeoutInMs} ms"
+              setTimeout recv, sbRecvErrorTimeoutInMs
+      
+    #start receiving loop
+    recv()
+      
 
   registerRoomUsers: (client, roomId, callback) =>
     @robot.logger.debug "Registering users for room " + roomId
