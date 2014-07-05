@@ -326,6 +326,8 @@ class vsOnline extends Adapter
         messages.push content : currentMessage
         currentMessage = ""      
     
+      currentMessage += line + "\n"
+    
       # last line? Push the remaining message
       if lineNr + 1 == lines.length    
         messages.push content : currentMessage
