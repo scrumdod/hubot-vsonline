@@ -247,6 +247,8 @@ class vsOnline extends Adapter
         callback()
 
   registerRoomUser: (userId, userName) ->
+    @robot.logger.debug "registering user " + userId + " -> " + userName
+    return if userId == null or userId == hubotUserTFID
     @robot.brain.userForId(userId, { name: userName })
     @robot.brain.data.users[userId].name = userName
 
