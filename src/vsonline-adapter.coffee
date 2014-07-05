@@ -313,26 +313,44 @@ class vsOnline extends Adapter
     
     return false
   
-  # splits the content to send into as many messages as needed (in MAX_MESSAGE_SIZE chunks)
+  # splits the content to send into as many messages as needed (in MAX_MESSAGE_SIZE chunks if needed)
   getMessagesToSend: (message) ->
     messages = []
     currentMessage = ""      
    
-    lines = message.split("\n")
+    lines = @splitIntoLines message, MAX_MESSAGE_SIZE
     
     for line, lineNr in lines
     
-      if line.length + 1 + currentMessage.length > MAX_MESSAGE_SIZE
+      if line.length + currentMessage.length > MAX_MESSAGE_SIZE
         messages.push content : currentMessage
         currentMessage = ""      
     
-      currentMessage += line + "\n"
+      currentMessage += line
     
       # last line? Push the remaining message
       if lineNr + 1 == lines.length    
         messages.push content : currentMessage
    
     return messages    
+  
+
+  # splits a message into lines by newline and each line 
+  # may not be bigger than maxLineSize
+  splitIntoLines : (message, maxLineSize) ->
+    previousIdx = 0
+    lines = []
+  
+    for idx in [0..message.length]
+      if message[idx] == "\n" or (idx - previousIdx + 1 == maxLineSize)
+        lines.push (message.substring(previousIdx, idx + 1)) if previousIdx != idx + 1 
+        previousIdx = idx + 1       
+     
+    lines.push (message.substring(previousIdx)) if(previousIdx + 1 != idx)
+      
+  
+    return lines
+
   
 exports.use = (robot) ->
   new vsOnline robot
