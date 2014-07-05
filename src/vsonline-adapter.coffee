@@ -82,7 +82,7 @@ class vsOnline extends Adapter
       messagesToSend = @getMessagesToSend str      
 
       for messageToSend,messageNumber in messagesToSend
-        client.createMessage envelope.room, messageToSend, (err,response) ->
+        client.createMessage envelope.room, messageToSend, (err,response) =>
           if err
             @robot.logger.error "Failed to send message " + messageNumber + " to user " + username
             @robot.logger.error err
