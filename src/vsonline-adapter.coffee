@@ -34,7 +34,7 @@ class vsOnline extends Adapter
   SSLCertKeyPath    = process.env.HUBOT_VSONLINE_SSL_CERT_KEY_PATH
   SSLRequestCertificate = process.env.HUBOT_VSONLINE_SSL_REQUESTCERT || false
   SSLRejectUnauthorized = process.env.HUBOT_VSONLINE_SSL_REJECTUNAUTHORIZED || false
-  SSLCACertPath     = process.env.HUBOT_VSONLINE_SSL_CA_KEY_PATH
+  SSLCACertPath     = process.env.HUBOT_VSONLINE_SSL_CA_KEY_PATH  
   
   hubotUserTFID = null
 
@@ -58,6 +58,12 @@ class vsOnline extends Adapter
   # rejoin every 23 hours
   REJOININTERVAL = 1000 * 60 * 60 * 23.5
   
+  # Maximum team room message size (bytes)
+  # Team room message sizes have limit.
+  # If hubot responses are bigger than this value we split
+  # them into as many messages as needed
+  MAX_MESSAGE_SIZE = 2400
+  
   # if any of these expressions are found in a command, we fetch the room users
   # and place them on the brain before passing the command to hubot.
   # We do this to place users into the brain (to support authorization) since
@@ -68,14 +74,18 @@ class vsOnline extends Adapter
     /@?(.+) (has) (["'\w: -_]+) (role)/i
   ]
   
-  send: (envelope, strings...) ->
-    messageToSend =
-      content : strings.join "\n"
-    client = Client.createClient accountName, collection, username, password
-    client.createMessage envelope.room, messageToSend, (err,response) ->
-      if err
-        @robot.logger.error "Failed to send message to user " + username
-        @robot.logger.error err
+  send: (envelope, strings...) ->  
+    
+    client = Client.createClient accountName, collection, username, password    
+    
+    for str in strings
+      messagesToSend = @getMessagesToSend str      
+
+      for messageToSend,messageNumber in messagesToSend
+        client.createMessage envelope.room, messageToSend, (err,response) =>
+          if err
+            @robot.logger.error "Failed to send message " + messageNumber + " to user " + username
+            @robot.logger.error err
 
   reply: (envelope, strings...) ->
     for str in strings
@@ -237,6 +247,8 @@ class vsOnline extends Adapter
         callback()
 
   registerRoomUser: (userId, userName) ->
+    @robot.logger.debug "registering user " + userId + " -> " + userName
+    return if userId == null or userId == hubotUserTFID
     @robot.brain.userForId(userId, { name: userName })
     @robot.brain.data.users[userId].name = userName
 
@@ -302,6 +314,45 @@ class vsOnline extends Adapter
         return true if(content.match(expr))
     
     return false
+  
+  # splits the content to send into as many messages as needed (in MAX_MESSAGE_SIZE chunks if needed)
+  getMessagesToSend: (message) ->
+    messages = []
+    currentMessage = ""      
+   
+    lines = @splitIntoLines message, MAX_MESSAGE_SIZE
+    
+    for line, lineNr in lines
+    
+      if line.length + currentMessage.length > MAX_MESSAGE_SIZE
+        messages.push content : currentMessage
+        currentMessage = ""      
+    
+      currentMessage += line
+    
+      # last line? Push the remaining message
+      if lineNr + 1 == lines.length    
+        messages.push content : currentMessage
+   
+    return messages    
+  
+
+  # splits a message into lines by newline and each line 
+  # may not be bigger than maxLineSize
+  splitIntoLines : (message, maxLineSize) ->
+    previousIdx = 0
+    lines = []
+  
+    for idx in [0..message.length]
+      if message[idx] == "\n" or (idx - previousIdx + 1 == maxLineSize)
+        lines.push (message.substring(previousIdx, idx + 1)) if previousIdx != idx + 1 
+        previousIdx = idx + 1       
+     
+    lines.push (message.substring(previousIdx)) if(previousIdx + 1 != idx)
+      
+  
+    return lines
+
   
 exports.use = (robot) ->
   new vsOnline robot
