@@ -64,6 +64,8 @@ class vsOnline extends Adapter
   # them into as many messages as needed
   MAX_MESSAGE_SIZE = 2400
 
+  API_VERSION = "1.0-preview.1"
+
   # if any of these expressions are found in a command, we fetch the room users
   # and place them on the brain before passing the command to hubot.
   # We do this to place users into the brain (to support authorization) since
@@ -74,9 +76,12 @@ class vsOnline extends Adapter
     /@?(.+) (has) (["'\w: -_]+) (role)/i
   ]
 
+  createClient: ->
+    Client.createClient accountName, collection, username, password, {apiVersion: API_VERSION}
+
   send: (envelope, strings...) ->
 
-    client = Client.createClient accountName, collection, username, password
+    client = @createClient()
 
     for str in strings
       messagesToSend = @getMessagesToSend str
@@ -94,7 +99,7 @@ class vsOnline extends Adapter
   join: (room, roomId) =>
     userId=
       userId:hubotUserTFID
-    client = Client.createClient accountName, collection, username, password
+    client = client = @createClient()
     client.joinRoom roomId, userId, hubotUserTFID, (err, statusCode) =>
       if err
         @robot.logger.error "Error joining " + room + " " + err
@@ -154,7 +159,7 @@ class vsOnline extends Adapter
 
     @robot.logger.debug "joining rooms"
 
-    client = Client.createClient accountName, collection, username, password
+    client = client = @createClient()
     client.getRooms (err, returnRooms) =>
       if err
         @robot.logger.error err
@@ -277,10 +282,11 @@ class vsOnline extends Adapter
   ensureTFId : (callback) =>
     if hubotUserTFID == null
       @robot.logger.debug "Getting TF ID"
-      client = Client.createClient accountName, collection, username, password
+      client = client = @createClient()
       client.getConnectionData (err, connectionData) =>
         if err or not connectionData.authenticatedUser?.id?
           @robot.logger.error "Failed to get hubot TF Id. will not be able to respond to commands. Potential command ignored"
+          @robot.logger.error "received error getting TF Id: #{err}" if err
         else
           hubotUserTFID = connectionData.authenticatedUser.id
           if (callback?)
@@ -302,7 +308,7 @@ class vsOnline extends Adapter
     @robot.logger.info "getting users for first time for room " + roomId unless lastRefresh?
 
     if(not lastRefresh? || (secondsSinceLastRegistration >= MAXSECONDSBETWEENREGISTRATIONS && @isAuthorizationRelatedCommand(content)))
-      client = Client.createClient accountName, collection, username, password
+      client = client = @createClient()
       @registerRoomUsers client , roomId, callback
     else
       if (callback?)
