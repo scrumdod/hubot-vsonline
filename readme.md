@@ -39,6 +39,7 @@ The following variables are optional
 
 
 The VSOnline adapter supports SSL.  To use SSL the following environment variables can be set
+
     HUBOT_VSONLINE_SSL_ENABLE - must be set to true
     HUBOT_VSONLINE_SSL_PORT - defaults to 443
     HUBOT_VSONLINE_SSL_PRIVATE_KEY_PATH - location of private key
