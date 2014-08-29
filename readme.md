@@ -30,7 +30,22 @@ The VSOnline adapter requires the following environment variables.
 	PORT - Port number for hubot to listen on when receiving messages from the Team Room.  This will default to 8080
     HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_USERNAME - The adapter's endpoint basic authentication username
     HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_PASSWORD - The adapter's endpoint basic authentication password
-   
+    
+The following variables are optional
+    
+    HUBOT_COLLECTION_NAME - Defaults to DefaultCollection
+    HUBOT_URL - The http endpoing to receive messages.  Defaults to /hubot/messagehook
+    
+
+
+The VSOnline adapter supports SSL.  To use SSL the following environment variables can be set
+    HUBOT_VSONLINE_SSL_ENABLE - must be set to true
+    HUBOT_VSONLINE_SSL_PORT - defaults to 443
+    HUBOT_VSONLINE_SSL_PRIVATE_KEY_PATH - location of private key
+    HUBOT_VSONLINE_SSL_CERT_KEY_PATH - location of certificate
+    HUBOT_VSONLINE_SSL_REQUESTCERT - true | false.  Defaults to false.  Request a client certificate
+    HUBOT_VSONLINE_SSL_REJECTUNAUTHORIZED - true | false - check certificate against CA list.  Defaults to false
+    HUBOT_VSONLINE_SSL_CA_KEY_PATH - Path to authority certificate, Default is null
 
 The VSOnline adapter supports two modes to receive team room messages:
 
