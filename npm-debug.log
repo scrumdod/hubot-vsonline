@@ -1,0 +1,120 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'C:\\ProgramData\\chocolatey\\lib\\nodejs.commandline.0.10.31\\tools\\node.exe',
+1 verbose cli   'C:\\ProgramData\\chocolatey\\lib\\npm.1.4.9\\tools\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'publish' ]
+2 info using npm@1.4.9
+3 info using node@v0.10.31
+4 verbose publish [ '.' ]
+5 verbose cache add [ '.', null ]
+6 verbose cache add name=undefined spec="." args=[".",null]
+7 verbose parsed url { protocol: null,
+7 verbose parsed url   slashes: null,
+7 verbose parsed url   auth: null,
+7 verbose parsed url   host: null,
+7 verbose parsed url   port: null,
+7 verbose parsed url   hostname: null,
+7 verbose parsed url   hash: null,
+7 verbose parsed url   search: null,
+7 verbose parsed url   query: null,
+7 verbose parsed url   pathname: '.',
+7 verbose parsed url   path: '.',
+7 verbose parsed url   href: '.' }
+8 silly lockFile 3a52ce78- .
+9 verbose lock . C:\Users\Rob\AppData\Roaming\npm-cache\3a52ce78-.lock
+10 verbose tar pack [ 'C:\\Users\\Rob\\AppData\\Local\\Temp\\npm-1964-CJTl5c_0\\1409696977336-0.602888444904238\\tmp.tgz',
+10 verbose tar pack   '.' ]
+11 verbose tarball C:\Users\Rob\AppData\Local\Temp\npm-1964-CJTl5c_0\1409696977336-0.602888444904238\tmp.tgz
+12 verbose folder .
+13 info prepublish hubot-vsonline@0.2.5
+14 silly lockFile 1f1177db-tar tar://.
+15 verbose lock tar://. C:\Users\Rob\AppData\Roaming\npm-cache\1f1177db-tar.lock
+16 silly lockFile fd300029-977336-0-602888444904238-tmp-tgz tar://C:\Users\Rob\AppData\Local\Temp\npm-1964-CJTl5c_0\1409696977336-0.602888444904238\tmp.tgz
+17 verbose lock tar://C:\Users\Rob\AppData\Local\Temp\npm-1964-CJTl5c_0\1409696977336-0.602888444904238\tmp.tgz C:\Users\Rob\AppData\Roaming\npm-cache\fd300029-977336-0-602888444904238-tmp-tgz.lock
+18 silly lockFile 1f1177db-tar tar://.
+19 silly lockFile 1f1177db-tar tar://.
+20 silly lockFile fd300029-977336-0-602888444904238-tmp-tgz tar://C:\Users\Rob\AppData\Local\Temp\npm-1964-CJTl5c_0\1409696977336-0.602888444904238\tmp.tgz
+21 silly lockFile fd300029-977336-0-602888444904238-tmp-tgz tar://C:\Users\Rob\AppData\Local\Temp\npm-1964-CJTl5c_0\1409696977336-0.602888444904238\tmp.tgz
+22 verbose tar unpack C:\Users\Rob\AppData\Local\Temp\npm-1964-CJTl5c_0\1409696977336-0.602888444904238\tmp.tgz
+23 silly lockFile 57566937-che-hubot-vsonline-0-2-5-package tar://C:\Users\Rob\AppData\Roaming\npm-cache\hubot-vsonline\0.2.5\package
+24 verbose lock tar://C:\Users\Rob\AppData\Roaming\npm-cache\hubot-vsonline\0.2.5\package C:\Users\Rob\AppData\Roaming\npm-cache\57566937-che-hubot-vsonline-0-2-5-package.lock
+25 silly lockFile fd300029-977336-0-602888444904238-tmp-tgz tar://C:\Users\Rob\AppData\Local\Temp\npm-1964-CJTl5c_0\1409696977336-0.602888444904238\tmp.tgz
+26 verbose lock tar://C:\Users\Rob\AppData\Local\Temp\npm-1964-CJTl5c_0\1409696977336-0.602888444904238\tmp.tgz C:\Users\Rob\AppData\Roaming\npm-cache\fd300029-977336-0-602888444904238-tmp-tgz.lock
+27 silly gunzTarPerm modes [ '755', '644' ]
+28 silly gunzTarPerm extractEntry package.json
+29 silly gunzTarPerm modified mode [ 'package.json', 438, 420 ]
+30 silly gunzTarPerm extractEntry docs/HOWTO-HubotForVisualStudioOnlineTeamRoomsOnAzureWebSite.md
+31 silly gunzTarPerm modified mode [ 'docs/HOWTO-HubotForVisualStudioOnlineTeamRoomsOnAzureWebSite.md',
+31 silly gunzTarPerm   438,
+31 silly gunzTarPerm   420 ]
+32 silly gunzTarPerm extractEntry readme.md
+33 silly gunzTarPerm modified mode [ 'readme.md', 438, 420 ]
+34 silly gunzTarPerm extractEntry src/vsonline-adapter.coffee
+35 silly gunzTarPerm modified mode [ 'src/vsonline-adapter.coffee', 438, 420 ]
+36 silly lockFile 57566937-che-hubot-vsonline-0-2-5-package tar://C:\Users\Rob\AppData\Roaming\npm-cache\hubot-vsonline\0.2.5\package
+37 silly lockFile 57566937-che-hubot-vsonline-0-2-5-package tar://C:\Users\Rob\AppData\Roaming\npm-cache\hubot-vsonline\0.2.5\package
+38 silly lockFile fd300029-977336-0-602888444904238-tmp-tgz tar://C:\Users\Rob\AppData\Local\Temp\npm-1964-CJTl5c_0\1409696977336-0.602888444904238\tmp.tgz
+39 silly lockFile fd300029-977336-0-602888444904238-tmp-tgz tar://C:\Users\Rob\AppData\Local\Temp\npm-1964-CJTl5c_0\1409696977336-0.602888444904238\tmp.tgz
+40 silly lockFile 3a52ce78- .
+41 silly lockFile 3a52ce78- .
+42 silly publish { name: 'hubot-vsonline',
+42 silly publish   version: '0.2.5',
+42 silly publish   description: 'A Visual Studio Online adapter for hubot',
+42 silly publish   main: './src/vsonline-adapter',
+42 silly publish   directories: { test: 'test' },
+42 silly publish   scripts: { test: 'echo "Error: no test specified" && exit 1' },
+42 silly publish   repository:
+42 silly publish    { type: 'git',
+42 silly publish      url: 'http://github.com/scrumdod/hubot-VSOnline' },
+42 silly publish   dependencies: { azure: '^0.9.10', express: '3.3.4', 'vso-client': '>=0.1.11' },
+42 silly publish   keywords: [ 'hubot', 'VSOnline' ],
+42 silly publish   author: { name: 'Rob Maher' },
+42 silly publish   license: 'MIT',
+42 silly publish   bugs: { url: 'https://github.com/scrumdod/hubot-VSOnline/issues' },
+42 silly publish   homepage: 'https://github.com/scrumdod/hubot-VSOnline',
+42 silly publish   readme: '# A [Hubot](https://github.com/github/hubot) adapter for [Visual Studio Online](https://www.visualstudioonline.com)\r\n\r\n\r\nYou should report any issues or submit any pull requests to the\r\n[Visual Studio Online adapter](https://github.com/scrumdod/hubot-VSOnline) repository.\r\n\r\n## Getting Started\r\n\r\n## Running Hubot on an Azure Web Site\r\n\r\nIf you want to run your Hubot on a Azure Web Site and responding to commands from one (or more) Team Rooms then you should read [HOWTO: Hubot for Visual Studio Online Team Rooms on Azure Web Site](docs/HOWTO-HubotForVisualStudioOnlineTeamRoomsOnAzureWebSite.md) otherwise keep reading\r\n\r\n## Installing the Team Room Hubot Visual Studio Online Adapter on Hubot\r\n\r\nFirst, create your own hubot template by using [the getting started instructions](https://github.com/github/hubot/blob/master/docs/README.md) of the hubot repository.\r\n\r\nThen you will need to edit the `package.json` for your hubot and add the\r\n`hubot-vsonline dependency.\r\n\r\n    "dependencies": {\r\n      "hubot-vsonline": "*",\r\n      "hubot": ">= 2.0.0",\r\n      ...\r\n    }\r\n\r\nThen save the file, and commit the changes to your hubot\'s git repository.\r\n\r\n## Configuring the Adapter\r\n\r\nThe VSOnline adapter requires the following environment variables.\r\n\r\n\tHUBOT_VSONLINE_USERNAME - The account name that you would like to run hubot under\r\n\tHUBOT_VSONLINE_PASSWORD - The account password\r\n\tHUBOT_VSONLINE_ACCOUNT- The name of your Visual Studio Online account e.g. if the url that you connect to is "https://yourname.visualstudio.com/" then just use \'your name\'\r\n\tHUBOT_VSONLINE_ROOMS - A comma separated list of rooms that you would like hubot to join\r\n    HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_USERNAME - The adapter\'s endpoint basic authentication username\r\n    HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_PASSWORD - The adapter\'s endpoint basic authentication password\r\n\r\nThe following variables are optional\r\n\r\n    HUBOT_COLLECTION_NAME - Defaults to DefaultCollection\r\n    HUBOT_URL - The http endpoing to receive messages.  Defaults to /hubot/messagehook\r\n\r\n\r\n\r\nThe VSOnline adapter supports SSL.  To use SSL the following environment variables can be set\r\n\r\n    HUBOT_VSONLINE_SSL_ENABLE - must be set to true\r\n    HUBOT_VSONLINE_SSL_PORT - defaults to 443\r\n    HUBOT_VSONLINE_SSL_PRIVATE_KEY_PATH - location of private key\r\n    HUBOT_VSONLINE_SSL_CERT_KEY_PATH - location of certificate\r\n    HUBOT_VSONLINE_SSL_REQUESTCERT - true | false.  Defaults to false.  Request a client certificate\r\n    HUBOT_VSONLINE_SSL_REJECTUNAUTHORIZED - true | false - check certificate against CA list.  Defaults to false\r\n    HUBOT_VSONLINE_SSL_CA_KEY_PATH - Path to authority certificate, Default is null\r\n\r\nThe VSOnline adapter supports two modes to receive team room messages:\r\n\r\n* HTTP - This is the default mode where the adapter listens for team room messages in a HTTP endpoint.\r\n* Service Bus Queue - In this mode the adapter reads messages from an Azure Service Bus Queue. This might be needed if your hubot is behind a firewall and not reachable from Visual Studio Online\r\n\r\n\r\n### Azure Service Bus Queue\r\n\r\nTo use this mode the adapter requires the following environment variables\r\n\r\n    HUBOT_VSONLINE_ADAPTER_RECV_MODE - must be set to  servicebus.\r\n    HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_CONNECTION - The Service Bus SAS connection string\r\n    HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_QUEUE - The Service Bus queue name\r\n\r\n\r\n## License\r\n\r\nMIT',
+42 silly publish   readmeFilename: 'readme.md',
+42 silly publish   _id: 'hubot-vsonline@0.2.5',
+42 silly publish   _shasum: 'd751ec623a929900f3ab34b3280eca451a254d79',
+42 silly publish   _from: '.' }
+43 verbose url raw hubot-vsonline
+44 verbose url resolving [ 'https://registry.npmjs.org/', './hubot-vsonline' ]
+45 verbose url resolved https://registry.npmjs.org/hubot-vsonline
+46 info trying registry request attempt 1 at 10:29:37
+47 http PUT https://registry.npmjs.org/hubot-vsonline
+48 http 403 https://registry.npmjs.org/hubot-vsonline
+49 verbose headers { date: 'Tue, 02 Sep 2014 22:29:32 GMT',
+49 verbose headers   server: 'CouchDB/1.5.0 (Erlang OTP/R14B04)',
+49 verbose headers   'content-type': 'application/json',
+49 verbose headers   'cache-control': 'max-age=60',
+49 verbose headers   'content-length': '6672',
+49 verbose headers   'accept-ranges': 'bytes',
+49 verbose headers   via: '1.1 varnish',
+49 verbose headers   'x-served-by': 'cache-ak102-NZ',
+49 verbose headers   'x-cache': 'MISS',
+49 verbose headers   'x-cache-hits': '0',
+49 verbose headers   'x-timer': 'S1409696971.732776,VS0,VE648',
+49 verbose headers   'keep-alive': 'timeout=10, max=50',
+49 verbose headers   connection: 'Keep-Alive' }
+50 error publish Failed PUT 403
+51 error Error: forbidden cannot modify pre-existing version: 0.2.5
+51 error old={"name":"hubot-vsonline","version":"0.2.5","description":"A Visual Studio Online adapter for hubot","main":"./src/vsonline-adapter","directories":{"test":"test"},"scripts":{"test":"echo \"Error: no test specified\" && exit 1"},"repository":{"type":"git","url":"http://github.com/scrumdod/hubot-VSOnline"},"dependencies":{"azure":"^0.9.10","express":"3.3.4","vso-client":">=0.2.2"},"keywords":["hubot","VSOnline"],"author":{"name":"Rob Maher"},"license":"MIT","bugs":{"url":"https://github.com/scrumdod/hubot-VSOnline/issues"},"homepage":"https://github.com/scrumdod/hubot-VSOnline","_id":"hubot-vsonline@0.2.5","_shasum":"e6f65900f929efe9fde15958b57d78caa289e03e","_from":".","_npmVersion":"1.4.9","_npmUser":{"name":"robmaher","email":"scrumdod@gmail.com"},"maintainers":[{"name":"robmaher","email":"scrumdod@gmail.com"}],"dist":{"shasum":"e6f65900f929efe9fde15958b57d78caa289e03e","tarball":"http://registry.npmjs.org/hubot-vsonline/-/hubot-vsonline-0.2.5.tgz"}}
+51 error new={"name":"hubot-vsonline","version":"0.2.5","description":"A Visual Studio Online adapter for hubot","main":"./src/vsonline-adapter","directories":{"test":"test"},"scripts":{"test":"echo \"Error: no test specified\" && exit 1"},"repository":{"type":"git","url":"http://github.com/scrumdod/hubot-VSOnline"},"dependencies":{"azure":"^0.9.10","express":"3.3.4","vso-client":">=0.1.11"},"keywords":["hubot","VSOnline"],"author":{"name":"Rob Maher"},"license":"MIT","bugs":{"url":"https://github.com/scrumdod/hubot-VSOnline/issues"},"homepage":"https://github.com/scrumdod/hubot-VSOnline","readme":"# A [Hubot](https://github.com/github/hubot) adapter for [Visual Studio Online](https://www.visualstudioonline.com)\u000d\u000a\u000d\u000a\u000d\u000aYou should report any issues or submit any pull requests to the\u000d\u000a[Visual Studio Online adapter](https://github.com/scrumdod/hubot-VSOnline) repository.\u000d\u000a\u000d\u000a## Getting Started\u000d\u000a\u000d\u000a## Running Hubot on an Azure Web Site\u000d\u000a\u000d\u000aIf you want to run your Hubot on a Azure Web Site and responding to commands from one (or more) Team Rooms then you should read [HOWTO: Hubot for Visual Studio Online Team Rooms on Azure Web Site](docs/HOWTO-HubotForVisualStudioOnlineTeamRoomsOnAzureWebSite.md) otherwise keep reading\u000d\u000a\u000d\u000a## Installing the Team Room Hubot Visual Studio Online Adapter on Hubot\u000d\u000a\u000d\u000aFirst, create your own hubot template by using [the getting started instructions](https://github.com/github/hubot/blob/master/docs/README.md) of the hubot repository.\u000d\u000a\u000d\u000aThen you will need to edit the `package.json` for your hubot and add the\u000d\u000a`hubot-vsonline dependency.\u000d\u000a\u000d\u000a    \"dependencies\": {\u000d\u000a      \"hubot-vsonline\": \"*\",\u000d\u000a      \"hubot\": \">= 2.0.0\",\u000d\u000a      ...\u000d\u000a    }\u000d\u000a\u000d\u000aThen save the file, and commit the changes to your hubot's git repository.\u000d\u000a\u000d\u000a## Configuring the Adapter\u000d\u000a\u000d\u000aThe VSOnline adapter requires the following environment variables.\u000d\u000a\u000d\u000a\u0009HUBOT_VSONLINE_USERNAME - The account name that you would like to run hubot under\u000d\u000a\u0009HUBOT_VSONLINE_PASSWORD - The account password\u000d\u000a\u0009HUBOT_VSONLINE_ACCOUNT- The name of your Visual Studio Online account e.g. if the url that you connect to is \"https://yourname.visualstudio.com/\" then just use 'your name'\u000d\u000a\u0009HUBOT_VSONLINE_ROOMS - A comma separated list of rooms that you would like hubot to join\u000d\u000a    HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_USERNAME - The adapter's endpoint basic authentication username\u000d\u000a    HUBOT_VSONLINE_ADAPTER_BASIC_AUTH_PASSWORD - The adapter's endpoint basic authentication password\u000d\u000a\u000d\u000aThe following variables are optional\u000d\u000a\u000d\u000a    HUBOT_COLLECTION_NAME - Defaults to DefaultCollection\u000d\u000a    HUBOT_URL - The http endpoing to receive messages.  Defaults to /hubot/messagehook\u000d\u000a\u000d\u000a\u000d\u000a\u000d\u000aThe VSOnline adapter supports SSL.  To use SSL the following environment variables can be set\u000d\u000a\u000d\u000a    HUBOT_VSONLINE_SSL_ENABLE - must be set to true\u000d\u000a    HUBOT_VSONLINE_SSL_PORT - defaults to 443\u000d\u000a    HUBOT_VSONLINE_SSL_PRIVATE_KEY_PATH - location of private key\u000d\u000a    HUBOT_VSONLINE_SSL_CERT_KEY_PATH - location of certificate\u000d\u000a    HUBOT_VSONLINE_SSL_REQUESTCERT - true | false.  Defaults to false.  Request a client certificate\u000d\u000a    HUBOT_VSONLINE_SSL_REJECTUNAUTHORIZED - true | false - check certificate against CA list.  Defaults to false\u000d\u000a    HUBOT_VSONLINE_SSL_CA_KEY_PATH - Path to authority certificate, Default is null\u000d\u000a\u000d\u000aThe VSOnline adapter supports two modes to receive team room messages:\u000d\u000a\u000d\u000a* HTTP - This is the default mode where the adapter listens for team room messages in a HTTP endpoint.\u000d\u000a* Service Bus Queue - In this mode the adapter reads messages from an Azure Service Bus Queue. This might be needed if your hubot is behind a firewall and not reachable from Visual Studio Online\u000d\u000a\u000d\u000a\u000d\u000a### Azure Service Bus Queue\u000d\u000a\u000d\u000aTo use this mode the adapter requires the following environment variables\u000d\u000a\u000d\u000a    HUBOT_VSONLINE_ADAPTER_RECV_MODE - must be set to  servicebus.\u000d\u000a    HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_CONNECTION - The Service Bus SAS connection string\u000d\u000a    HUBOT_VSONLINE_ADAPTER_SERVICE_BUS_QUEUE - The Service Bus queue name\u000d\u000a\u000d\u000a\u000d\u000a## License\u000d\u000a\u000d\u000aMIT","readmeFilename":"readme.md","_id":"hubot-vsonline@0.2.5","_shasum":"d751ec623a929900f3ab34b3280eca451a254d79","_from":".","_npmVersion":"1.4.9","_npmUser":{"name":"robmaher","email":"scrumdod@gmail.com"},"maintainers":[{"name":"robmaher","email":"scrumdod@gmail.com"}],"dist":{"shasum":"d751ec623a929900f3ab34b3280eca451a254d79","tarball":"http://registry.npmjs.org/hubot-vsonline/-/hubot-vsonline-0.2.5.tgz"}}: hubot-vsonline
+51 error     at RegClient.<anonymous> (C:\ProgramData\chocolatey\lib\npm.1.4.9\tools\node_modules\npm\node_modules\npm-registry-client\lib\request.js:273:14)
+51 error     at Request._callback (C:\ProgramData\chocolatey\lib\npm.1.4.9\tools\node_modules\npm\node_modules\npm-registry-client\lib\request.js:211:65)
+51 error     at Request.self.callback (C:\ProgramData\chocolatey\lib\npm.1.4.9\tools\node_modules\npm\node_modules\request\request.js:123:22)
+51 error     at Request.emit (events.js:98:17)
+51 error     at Request.<anonymous> (C:\ProgramData\chocolatey\lib\npm.1.4.9\tools\node_modules\npm\node_modules\request\request.js:893:14)
+51 error     at Request.emit (events.js:117:20)
+51 error     at IncomingMessage.<anonymous> (C:\ProgramData\chocolatey\lib\npm.1.4.9\tools\node_modules\npm\node_modules\request\request.js:844:12)
+51 error     at IncomingMessage.emit (events.js:117:20)
+51 error     at _stream_readable.js:943:16
+51 error     at process._tickCallback (node.js:419:13)
+52 error If you need help, you may report this *entire* log,
+52 error including the npm and node versions, at:
+52 error     <http://github.com/npm/npm/issues>
+53 error System Windows_NT 6.2.9200
+54 error command "C:\\ProgramData\\chocolatey\\lib\\nodejs.commandline.0.10.31\\tools\\node.exe" "C:\\ProgramData\\chocolatey\\lib\\npm.1.4.9\\tools\\node_modules\\npm\\bin\\npm-cli.js" "publish"
+55 error cwd C:\users\rob\hubot-VSOnline
+56 error node -v v0.10.31
+57 error npm -v 1.4.9
+58 verbose exit [ 1, true ]
