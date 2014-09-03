@@ -1,6 +1,4 @@
-# hubot-vsonline
-
-## HOWTO: Hubot for Visual Studio Online Team Rooms on Azure Web Site
+## How to: Running Hubot for Visual Studio Online on an Azure Web Site
 
 This is a Visual Studio Online and [Azure Web Sites](http://azure.microsoft.com/en-us/services/web-sites/) 
 specific version of the more general [instructions in the Hubot wiki](https://github.com/github/hubot/wiki/Deploying-Hubot-onto-Heroku).
@@ -24,7 +22,7 @@ an [excellent article on how to get those installed](https://github.com/joyent/n
 
     If you want to know more details about licensing and features see [Visual Studio Online   Plans](http://www.visualstudio.com/products/visual-studio-online-overview-vs) and [compare Visual Studio   Offerings](http://www.visualstudio.com/en-us/products/compare-visual-studio-products-vs)
 
-    The hubot user also needs to be granted access (chat permission is sufficient) to the Team Room(s) Hubot is going to   respond to commands.
+    The hubot user also needs to be granted access (chat permission is sufficient) to the Team Room(s) Hubot is going to respond to commands for.
 
     If you are unsure how to do it, the MSDN page [Collaborate in a team room](http://msdn.microsoft.com/en-us/library/dn169471.aspx) has a topic on *Add Members*
 
@@ -111,7 +109,7 @@ custom scripts
         info:    site create command OK
 
 
-1. Configure Visual Studio Online adapter 
+1. Configure the Visual Studio Online adapter 
 
     First, you'll need to configure `hubot` to use the adapter by setting the environment variable `HUBOT_ADAPTER` to `vsonline`
 
@@ -141,7 +139,7 @@ custom scripts
         % azure site appsetting add HUBOT_VSONLINE_USERNAME=<bot user name (from alternate credentials)>
         % azure site appsetting add HUBOT_VSONLINE_PASSWORD=<bot password (from alternate credentials)>
 
-    **Set the rooms**: `HUBOT_VSONLINE_ROOMS`. These are the rooms that you would like `hubot` to join (comma separated list with room names). This step is optional, hubot will respond to commands even if you don't specify rooms to join. He will just not be visible to users.
+    **Set the rooms**: `HUBOT_VSONLINE_ROOMS`. These are the rooms that you would like `hubot` to join (comma separated list with room names). This step is optional, hubot will respond to commands even if you don't specify rooms to join. 
 
         % azure site appsetting add HUBOT_VSONLINE_ROOMS="<team room name 1>,<team room name 2>"
 
@@ -237,7 +235,7 @@ custom scripts
     You should see the list of commands available in Hubot.
 
 
-1. Create Visual Studio Online Subscriptions
+1. Create a Visual Studio Online service hook subscription
 
     For each Team Room you want to use Hubot, you'll need to create a 
     [Hubot Service Hook subscription](http://go.microsoft.com/fwlink/?LinkID=402677) on a team project. 
@@ -249,13 +247,10 @@ custom scripts
  
 
 
-At this point, any given user who is in a team room registered earlier in the variable `HUBOT_VSONLINE_ROOMS` is able to 
-interact with `hubot`. You could check by entering in one of those rooms and send the message `hubot ping`
+At this point, any given user who is in a team room registered earlier in the variable `HUBOT_VSONLINE_ROOMS` is able to interact with `hubot`. You could check by entering in one of those rooms and send the message `hubot ping`
 
         hubot ping
         PONG
-
-
 
 ## Visual Studio Online Scripts
 
@@ -289,22 +284,21 @@ Here are the steps to install these scripts in your `hubot`
 
 At this point you should be able to issue commands to Visual Studio Online, where each
 command will be performed using the `hubot` user that is running this instance. To check 
-what VSO commands are available
+what VSO commands are available:
 
         hubot help vso
         Hubot vso build <build number> - Triggers a build of the build number specified.
         Hubot vso create pbi|bug|feature|impediment|task <title> with description <description> - Create a Product Backlog work item with the title and descriptions specified.  This will put it in the root areapath and iteration
         Hubot vso forget my credential - Forgets the OAuth access token
-        Hubot vso set room default <key> = <value> - Sets room setting <key> with value <value>
-        Hubot vso show builds - Will return a list of build definitions, along with their build number.
-        Hubot vso show projects - Show the list of team projects
-        Hubot vso show room defaults - Displays room settings
-        Hubot vso what have i done today - This will show a list of all tasks that you have updated today
-        Hubot vso who am i - Show user info as seen in Visual Studio Online user profile
+        Hubot vso room default <key> = <value> - Sets room setting <key> with value <value>
+        Hubot vso builds - Will return a list of build definitions, along with their build number.
+        Hubot vso projects - Show the list of team projects
+        Hubot vso room defaults - Displays room settings
+        Hubot vso today - This will show a list of all tasks that you have updated today
+        Hubot vso me - Show user info as seen in Visual Studio Online user profile
 
 
 To run commands on behalf of team room members continue reading.
-
 
 ### Running Visual Studio Online commands impersonating users
 
@@ -348,7 +342,7 @@ Follow the steps below to enable OAuth in scripts
 
     At this point you could test the scripts using OAuth by sending the following message in the room
 
-        hubot vso who am i
+        hubot vso me
         
     `hubot` will respond with
 
@@ -429,7 +423,7 @@ If you are running `Hubot` in trusted mode, in which users are not impersonated 
 > [TIME OMMITED (Coordinated Universal Time)] ERROR Failed to get hubot TF Id. will
 not be able to respond to commands. Potential command ignored
 
-If you are running `Visual Studio Online commands` in impersonating mode, in order run Visual Studio Online commands, you must first execute `hubot vso who am i` command and click on the link in order to authorize impersonation.
+If you are running `Visual Studio Online commands` in impersonating mode, in order run Visual Studio Online commands, you must first execute `hubot vso me` command and click on the link in order to authorize impersonation.
 
 The following errors can occur:
 
