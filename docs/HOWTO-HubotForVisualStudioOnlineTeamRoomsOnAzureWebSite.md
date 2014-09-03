@@ -1,4 +1,4 @@
-## How to: Hubot for Visual Studio Online on an Azure Web Site
+## How to: Running Hubot for Visual Studio Online on an Azure Web Site
 
 This is a Visual Studio Online and [Azure Web Sites](http://azure.microsoft.com/en-us/services/web-sites/) 
 specific version of the more general [instructions in the Hubot wiki](https://github.com/github/hubot/wiki/Deploying-Hubot-onto-Heroku).
