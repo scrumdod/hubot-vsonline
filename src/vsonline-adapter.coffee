@@ -5,7 +5,6 @@ fs = require('fs')
 azure = require 'azure'
 util = require 'util'
 
-
 VSONLINE_ADAPTER_RECV_VALID_MODES = [
   'http',
   'servicebus'
