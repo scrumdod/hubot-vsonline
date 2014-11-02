@@ -5,7 +5,6 @@ fs = require('fs')
 azure = require 'azure'
 util = require 'util'
 
-
 VSONLINE_ADAPTER_RECV_VALID_MODES = [
   'http',
   'servicebus'
@@ -64,7 +63,7 @@ class vsOnline extends Adapter
   # them into as many messages as needed
   MAX_MESSAGE_SIZE = 2400
 
-  API_VERSION = "1.0-preview.1"
+  API_VERSION = "1.0"
 
   # if any of these expressions are found in a command, we fetch the room users
   # and place them on the brain before passing the command to hubot.
