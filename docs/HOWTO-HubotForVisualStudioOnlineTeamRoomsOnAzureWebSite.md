@@ -1,6 +1,6 @@
 ## How to: Running Hubot for Visual Studio Online on an Azure Web Site
 
-This is a Visual Studio Online and [Azure Web Sites](http://azure.microsoft.com/en-us/services/web-sites/) 
+This is a Visual Studio Online and [Azure Web Sites](http://azure.microsoft.com/en-us/services/web-sites/)
 specific version of the more general [instructions in the Hubot wiki](https://github.com/github/hubot/wiki/Deploying-Hubot-onto-Heroku).
 
 You will need [Git](http://git-scm.com/). You can check [here](http://git-scm.com/book/en/Getting-Started-Installing-Git) how to install `Git` .
@@ -8,7 +8,7 @@ You will need [Git](http://git-scm.com/). You can check [here](http://git-scm.co
 You will need also [node.js](http://nodejs.org/) and [npm](https://npmjs.org/). Joyent wiki has
 an [excellent article on how to get those installed](https://github.com/joyent/node/wiki/Installation), so we'll omit those details here.
 
-1. Create a new Microsoft Account for the Hubot user and add it to a Visual Studio Online account.  
+1. Create a new Microsoft Account for the Hubot user and add it to a Visual Studio Online account.
 
     The added user, requires one of the following licenses:
 
@@ -30,11 +30,11 @@ an [excellent article on how to get those installed](https://github.com/joyent/n
 1. [Enable alternate credentials](http://www.visualstudio.com/integrate/get-started-auth-introduction-vsi) to the created Hubot user
 
 
-1. Install `hubot`, using npm, if you don't already have it. 
+1. Install `hubot`, using npm, if you don't already have it.
 
         % npm install --global coffee-script hubot
 
-1. Create a new `hubot` instance so he can customize it to use the [Visual Studio Online adapter](https://github.com/scrumdod/hubot-VSOnline) and be able to run 
+1. Create a new `hubot` instance so he can customize it to use the [Visual Studio Online adapter](https://github.com/scrumdod/hubot-VSOnline) and be able to run
 custom scripts
 
         % hubot --create <path>
@@ -109,7 +109,7 @@ custom scripts
         info:    site create command OK
 
 
-1. Configure the Visual Studio Online adapter 
+1. Configure the Visual Studio Online adapter
 
     First, you'll need to configure `hubot` to use the adapter by setting the environment variable `HUBOT_ADAPTER` to `vsonline`
 
@@ -144,7 +144,7 @@ custom scripts
         % azure site appsetting add HUBOT_VSONLINE_ROOMS="<team room name 1>,<team room name 2>"
 
 1. Configure the `hubot` persistence (aka [brain](https://github.com/github/hubot/blob/master/docs/scripting.md#persistence))
-    
+
     By default, Hubot uses [Redis](http://redis.io/) as its persistence storage. This `hubot` instance will use [Azure Blob Storage](http://azure.microsoft.com/en-us/documentation/articles/storage-introduction/)
     to persist its data. You'll use the [`hubot-azure-scripts`](https://github.com/bfcamara/hubot-azure-scripts) module to persist data to a Azure Storage Account.
     First, you'll need to register it as a dependency
@@ -283,7 +283,7 @@ Here are the steps to install these scripts in your `hubot`
         % git push azure master
 
 At this point you should be able to issue commands to Visual Studio Online, where each
-command will be performed using the `hubot` user that is running this instance. To check 
+command will be performed using the `hubot` user that is running this instance. To check
 what VSO commands are available:
 
         hubot help vso
@@ -302,9 +302,9 @@ To run commands on behalf of team room members continue reading.
 
 ### Running Visual Studio Online commands impersonating users
 
-To run Visual Studio Online scripts on behalf of the user who is sending the command, 
+To run Visual Studio Online scripts on behalf of the user who is sending the command,
 the scripts support the OAuth 2.0 protocol to get an access token for a user and use it when
-calling the Visual Studio Online REST APIs. You can get more information [here](http://www.visualstudio.com/integrate/get-started-auth-oauth2-vsi). 
+calling the Visual Studio Online REST APIs. You can get more information [here](http://www.visualstudio.com/integrate/get-started-auth-oauth2-vsi).
 
 It is advisable you enable this mode, otherwise Hubot Visual Studio Online scripts will run in trusted mode, this means all operations will be executed by Hubot account on behalf of the user. This the user will be able to perform all operations Hubot account as permissions too (and operations will be registered under Hubout account instead of the user account).
 
@@ -319,6 +319,12 @@ Follow the steps below to enable OAuth in scripts
 
     replacing `<name-of-your-site` by the name of the site you created
 
+    You need to configure the following Authorized scopes
+
+     * Work items (read and write)
+     * Build (read and execute)
+     * Code (read)
+
     After you have created the app, you will need to configure the script with the value shown for the application you have registered.
 
 1. Configure scripts to use OAuth
@@ -329,7 +335,7 @@ Follow the steps below to enable OAuth in scripts
     + **`HUBOT_VSONLINE_AUTHORIZATION_CALLBACK_URL`**: The OAuth callback URL 
 
     Run the following console commands 
-  
+
         % azure site appsetting add HUBOT_VSONLINE_APP_ID=<App ID>
         % azure site appsetting add HUBOT_VSONLINE_APP_SECRET=<App Secret>
         % azure site appsetting add HUBOT_VSONLINE_AUTHORIZATION_CALLBACK_URL=https://<name-of-your-site>.azurewebsites.net/hubot/oauth2/callback
@@ -370,10 +376,10 @@ This is just an example of some scripts that may leak information or can be disr
 
     * storage.coffee - Implements the show storage, which allow any user to inspect hubot's brain content. While some restrictions apply it is possible that this command will disclose unwanted information depending what commands store in the brain.
     * ping.coffee - Implements a die command. If this command is issue, hubot finishes itself. While this is harmfull if hubot is being executed under IIS like on a Azure web site, it is not harmfull if being executed under it's own process.
-  
-  
+
+
 In case you want to remove these scripts, just delete from scripts folder in your hubot installation.
-  
+
 
 ### Troubleshooting
 
@@ -392,7 +398,7 @@ Run the command
 >  % azure site log tail <name-of-your-site>
 
   Replace `<name-of-your-site>`> by your web site name
-    
+
 You should see now see something similar to
 >info:    Executing command site log tail
 >2014-XX-XXTXX:XX:XX  Welcome, you are now connected to log-streaming service.
