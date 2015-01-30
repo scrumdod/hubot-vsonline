@@ -1,6 +1,6 @@
 Client                                               = require 'vso-client'
 {Robot, Adapter, normal,TextMessage,EnterMessage,LeaveMessage,TopicMessage} = require 'hubot'
-packageJson = require('../package.json');
+packageJson = require '../package.json'
 https = require('https')
 fs = require('fs')
 azure = require 'azure'
