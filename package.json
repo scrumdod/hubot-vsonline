@@ -16,7 +16,7 @@
   "dependencies": {
     "azure": "^0.9.10",
     "express": "3.3.4",
-    "vso-client": ">=0.1.11"
+    "vso-client": ">=0.2.4"
   },
   "keywords": [
     "hubot",
