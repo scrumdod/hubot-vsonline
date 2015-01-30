@@ -1,5 +1,6 @@
 Client                                               = require 'vso-client'
 {Robot, Adapter, normal,TextMessage,EnterMessage,LeaveMessage,TopicMessage} = require 'hubot'
+packageJson = require '../package.json'
 https = require('https')
 fs = require('fs')
 azure = require 'azure'
@@ -48,6 +49,8 @@ class vsOnline extends Adapter
   hubotUrl       = process.env.HUBOT_URL || '/hubot/messagehook'
   DebugPassThroughOwnMessages = process.env.HUBOT_VSONLINE_DEBUG_ENABLEPASSTHROUGH || false
 
+  userAgent = "vsonlineHubotAdapter/#{packageJson.version}"
+
   roomsRefreshDates = {}
   # how much time we allow to elase before getting the room users and register
   # them on the brain
@@ -76,7 +79,7 @@ class vsOnline extends Adapter
   ]
 
   createClient: ->
-    Client.createClient accountName, collection, username, password, {apiVersion: API_VERSION}
+    Client.createClient accountName, collection, username, password, {apiVersion: API_VERSION, userAgent: userAgent}
 
   send: (envelope, strings...) ->
 
